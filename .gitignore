@@ -1,0 +1,23 @@
+# Java / Maven
+backend/target/
+*.class
+*.jar
+
+# IntelliJ
+.idea/
+*.iml
+out/
+
+# Python
+nlp-service/venv/
+nlp-service/__pycache__/
+nlp-service/*.pyc
+**/__pycache__/
+*.pyc
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Логи
+*.log

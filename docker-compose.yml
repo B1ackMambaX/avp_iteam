@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: avp_iteam_postgres
+    environment:
+      POSTGRES_DB: avp_iteam
+      POSTGRES_USER: avp_iteam_user
+      POSTGRES_PASSWORD: avp_iteam_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - avp_iteam_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U avp_iteam_user -d avp_iteam"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  avp_iteam_data:
