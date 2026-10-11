@@ -37,23 +37,32 @@ public class HypothesisABenchmarkRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        List<TestDatasetRow> dataset = TestDatasetLoader.load(Path.of(datasetPath));
-        log.info("Загружено {} строк размеченного датасета", dataset.size());
+        List<TestDatasetRow> mainDataset = TestDatasetLoader.load(Path.of(datasetPath));
+        log.info("Загружено {} строк основного датасета", mainDataset.size());
+        runAccuracyPhase(mainDataset, "основной (test-dataset.csv)");
 
-        runAccuracyPhase(dataset);
-        runPerformancePhase(dataset);
+        Path holdoutPath = Path.of(datasetPath).resolveSibling("holdout-dataset.csv");
+        if (holdoutPath.toFile().exists()) {
+            List<TestDatasetRow> holdoutDataset = TestDatasetLoader.load(holdoutPath);
+            log.info("Загружено {} строк holdout-датасета", holdoutDataset.size());
+            runAccuracyPhase(holdoutDataset, "holdout (другая лексика)");
+        } else {
+            log.warn("Holdout-датасет не найден по пути {}, пропускаем", holdoutPath);
+        }
+
+        runPerformancePhase(mainDataset);
     }
 
-    private void runAccuracyPhase(List<TestDatasetRow> dataset) {
-        log.info("========== ФАЗА 1: ТОЧНОСТЬ (Гипотеза А (алгоритмический)) ==========");
+    private void runAccuracyPhase(List<TestDatasetRow> dataset, String datasetLabel) {
+        log.info("========== ТОЧНОСТЬ (Гипотеза А) — датасет: {} ==========", datasetLabel);
 
         int total = dataset.size();
         int correctClassification = 0;
 
-        int truePositive = 0;  // верно определили третье лицо
-        int falsePositive = 0; // определили третье лицо, а его не было
-        int falseNegative = 0; // пропустили платёж за третье лицо
-        int trueNegative = 0;  // верно определили, что не третье лицо
+        int truePositive = 0;
+        int falsePositive = 0;
+        int falseNegative = 0;
+        int trueNegative = 0;
 
         int thirdPartyRows = 0;
         int correctNameExtraction = 0;
@@ -64,16 +73,17 @@ public class HypothesisABenchmarkRunner implements CommandLineRunner {
             boolean expected = row.expectedThirdParty();
             boolean actual = result.thirdParty();
 
-            if (expected == actual) {
-                correctClassification++;
-            }
-
+            if (expected == actual) correctClassification++;
             if (expected && actual) truePositive++;
             if (!expected && actual) falsePositive++;
             if (expected && !actual) falseNegative++;
             if (!expected && !actual) trueNegative++;
 
-            if (expected) {
+            // Имя сверяем только там, где эталон задан (не null) —
+            // для строк с неоднозначной ролью (алименты, "по поручению")
+            // expected_beneficiary_name теперь пуст намеренно, и мы не
+            // штрафуем/не хвалим парсер за эти случаи отдельно.
+            if (expected && row.expectedBeneficiaryName() != null) {
                 thirdPartyRows++;
                 if (namesMatch(row.expectedBeneficiaryName(), result.beneficiaryName())) {
                     correctNameExtraction++;
@@ -86,17 +96,26 @@ public class HypothesisABenchmarkRunner implements CommandLineRunner {
         }
 
         double classificationAccuracy = 100.0 * correctClassification / total;
+        double precision = (truePositive + falsePositive == 0) ? 0.0
+                : 100.0 * truePositive / (truePositive + falsePositive);
+        double recall = (truePositive + falseNegative == 0) ? 0.0
+                : 100.0 * truePositive / (truePositive + falseNegative);
+        double f1 = (precision + recall == 0) ? 0.0
+                : 2 * precision * recall / (precision + recall);
+
         double nameExtractionAccuracy = thirdPartyRows == 0
                 ? 0.0
                 : 100.0 * correctNameExtraction / thirdPartyRows;
 
         log.info("Всего строк: {}", total);
-        log.info("Точность классификации 'третье лицо / не третье лицо': {}%",
-                String.format(Locale.US, "%.1f", classificationAccuracy));
-        log.info("  TP={}, FP={}, FN={}, TN={}",
-                truePositive, falsePositive, falseNegative, trueNegative);
-        log.info("Строк с третьим лицом: {}", thirdPartyRows);
-        log.info("Точность извлечения ФИО выгодоприобретателя (из строк с третьим лицом): {}%",
+        log.info("Accuracy классификации: {}%", String.format(Locale.US, "%.1f", classificationAccuracy));
+        log.info("Precision: {}% | Recall: {}% | F1: {}%",
+                String.format(Locale.US, "%.1f", precision),
+                String.format(Locale.US, "%.1f", recall),
+                String.format(Locale.US, "%.1f", f1));
+        log.info("  TP={}, FP={}, FN={}, TN={}", truePositive, falsePositive, falseNegative, trueNegative);
+        log.info("Строк с однозначным эталонным именем: {}", thirdPartyRows);
+        log.info("Точность извлечения ФИО (только однозначные случаи): {}%",
                 String.format(Locale.US, "%.1f", nameExtractionAccuracy));
     }
 

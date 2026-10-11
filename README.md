@@ -185,10 +185,8 @@ PID процесса выводится перед 10-секундной пау�
 - `operation_parse_result.operation_id`, `operation_mapping_candidate.operation_id`, `nlp_task.operation_id → operations.id`
 - `operation_mapping_candidate.contract_id → contracts.id`
 
-Схемы ниже нарисованы для V1 и требуют обновления:
-
-![db1.png](docs/db1.png)
-![db2.png](docs/db2.png)
+![img_2.png](docs/img_2.png)
+![img.png](docs/db2.png)
 
 ### Нормализация для поиска
 

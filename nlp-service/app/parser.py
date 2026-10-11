@@ -27,39 +27,43 @@ _emb = NewsEmbedding()
 _morph_tagger = NewsMorphTagger(_emb)
 _ner_tagger = NewsNERTagger(_emb)
 
-SIMPLE_MARKERS = [
-    "выгодоприобретатель",
-    "в пользу",
-    "по поручению",
-    "алимент",
-    "исполнительн",
+MARKER_PATTERNS = [
+    re.compile(r"\bвыгодоприобретател\w*\b"),
+    re.compile(r"\bв\s+пользу\b"),
+    re.compile(r"\bпо\s+поручени\w*\b"),
+    re.compile(r"\bалимент\w*\b"),
+    re.compile(r"\bисполнительн\w*\b"),
+    re.compile(r"треть\S*\s+лиц\S*"),
 ]
 
-# Паттерн по корню - ловит "третье лицо", "третьего лица",
-# "третьему лицу", "третьих лиц" и т.д. Идентичен Java-версии.
-THIRD_PARTY_PHRASE = re.compile(r"треть\S*\s+лиц\S*")
+NEGATION_WORDS = {"не", "нет", "отсутств", "без"}
+NEGATION_WINDOW = 20
 
 STOP_WORDS = {
     "выгодоприобретатель", "оплата", "перевод", "платеж", "платёж",
     "перечисление", "возврат", "погашение", "заработная", "алименты",
 }
 
+NEGATION_PATTERN = re.compile(r"\b(не|нет|отсутств\w*|без)\b", re.UNICODE)
+NEGATION_WINDOW = 20
+
+def is_negated(lower_text: str, marker_start: int, marker_end: int) -> bool:
+    window_start = max(0, marker_start - NEGATION_WINDOW)
+    window_end = min(len(lower_text), marker_end + NEGATION_WINDOW)
+    window = lower_text[window_start:window_end]
+    return bool(NEGATION_PATTERN.search(window))
+
 
 def find_marker_position(lower_text: str) -> int:
-    """Возвращает позицию самого раннего маркера, либо -1."""
     earliest = -1
-
-    for marker in SIMPLE_MARKERS:
-        idx = lower_text.find(marker)
-        if idx >= 0 and (earliest == -1 or idx < earliest):
-            earliest = idx
-
-    match = THIRD_PARTY_PHRASE.search(lower_text)
-    if match:
-        idx = match.start()
-        if earliest == -1 or idx < earliest:
-            earliest = idx
-
+    for pattern in MARKER_PATTERNS:
+        for match in pattern.finditer(lower_text):
+            idx = match.start()
+            if is_negated(lower_text, idx, match.end()):
+                continue
+            if earliest == -1 or idx < earliest:
+                earliest = idx
+            break
     return earliest
 
 

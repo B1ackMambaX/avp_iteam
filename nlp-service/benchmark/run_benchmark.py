@@ -15,10 +15,11 @@ from app.parser import parse_payment_purpose
 
 DATASET_PATH = os.path.join(os.path.dirname(__file__), "..", "..", "data", "test-dataset.csv")
 
-# Natasha заметно медленнее regex (embedding + NER на каждый текст),
-# поэтому итераций берём на порядки меньше, чем в Java-версии.
-PERFORMANCE_ITERATIONS = 2000
-
+# Было 2000 — мало для устойчивой оценки, поднимаем для меньшего шума.
+# Полный дневной объём (100k) гонять не будем — не нужно для
+# целей сравнения, достаточно стабильной оценки throughput.
+PERFORMANCE_ITERATIONS = 20000
+HOLDOUT_PATH = os.path.join(os.path.dirname(__file__), "..", "..", "data", "holdout-dataset.csv")
 
 def load_dataset(path):
     rows = []
@@ -46,8 +47,8 @@ def names_match(expected, actual):
     return normalize(expected) == normalize(actual)
 
 
-def run_accuracy_phase(dataset):
-    print("========== ФАЗА 1: ТОЧНОСТЬ (Гипотеза Б/Natasha) ==========")
+def run_accuracy_phase(dataset, label):
+    print(f"========== ТОЧНОСТЬ (Гипотеза Б) — датасет: {label} ==========")
 
     total = len(dataset)
     correct_classification = 0
@@ -57,13 +58,11 @@ def run_accuracy_phase(dataset):
 
     for row in dataset:
         result = parse_payment_purpose(row["payment_purpose"])
-
         expected = row["expected_third_party"]
         actual = result["third_party"]
 
         if expected == actual:
             correct_classification += 1
-
         if expected and actual:
             tp += 1
         if not expected and actual:
@@ -73,7 +72,8 @@ def run_accuracy_phase(dataset):
         if not expected and not actual:
             tn += 1
 
-        if expected:
+        # Аналогично Java: сверяем имя только там, где эталон задан.
+        if expected and row["expected_beneficiary_name"] is not None:
             third_party_rows += 1
             if names_match(row["expected_beneficiary_name"], result["beneficiary_name"]):
                 correct_name_extraction += 1
@@ -83,13 +83,17 @@ def run_accuracy_phase(dataset):
               f"actual_name='{result['beneficiary_name']}'")
 
     classification_accuracy = 100.0 * correct_classification / total
+    precision = (100.0 * tp / (tp + fp)) if (tp + fp) else 0.0
+    recall = (100.0 * tp / (tp + fn)) if (tp + fn) else 0.0
+    f1 = (2 * precision * recall / (precision + recall)) if (precision + recall) else 0.0
     name_accuracy = (100.0 * correct_name_extraction / third_party_rows) if third_party_rows else 0.0
 
     print(f"\nВсего строк: {total}")
-    print(f"Точность классификации: {classification_accuracy:.1f}%")
+    print(f"Accuracy классификации: {classification_accuracy:.1f}%")
+    print(f"Precision: {precision:.1f}% | Recall: {recall:.1f}% | F1: {f1:.1f}%")
     print(f"  TP={tp}, FP={fp}, FN={fn}, TN={tn}")
-    print(f"Строк с третьим лицом: {third_party_rows}")
-    print(f"Точность извлечения ФИО: {name_accuracy:.1f}%")
+    print(f"Строк с однозначным эталонным именем: {third_party_rows}")
+    print(f"Точность извлечения ФИО (только однозначные случаи): {name_accuracy:.1f}%")
 
 
 def run_performance_phase(dataset):
@@ -126,7 +130,14 @@ def run_performance_phase(dataset):
 
 if __name__ == "__main__":
     dataset = load_dataset(DATASET_PATH)
-    print(f"Загружено {len(dataset)} строк датасета\n")
+    print(f"Загружено {len(dataset)} строк основного датасета\n")
+    run_accuracy_phase(dataset, "основной (test-dataset.csv)")
 
-    run_accuracy_phase(dataset)
+    if os.path.exists(HOLDOUT_PATH):
+        holdout = load_dataset(HOLDOUT_PATH)
+        print(f"\nЗагружено {len(holdout)} строк holdout-датасета\n")
+        run_accuracy_phase(holdout, "holdout (другая лексика)")
+    else:
+        print(f"\nHoldout-датасет не найден по пути {HOLDOUT_PATH}, пропускаем")
+
     run_performance_phase(dataset)
