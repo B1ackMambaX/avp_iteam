@@ -2,6 +2,7 @@ package com.bank.avpiteam.util;
 
 import com.bank.avpiteam.domain.Client;
 import com.bank.avpiteam.domain.Contract;
+import com.bank.avpiteam.domain.ContractParty;
 import com.bank.avpiteam.domain.Operation;
 import com.bank.avpiteam.repository.ClientRepository;
 import com.bank.avpiteam.repository.ContractRepository;
@@ -159,7 +160,6 @@ public class TestDataGenerator implements CommandLineRunner {
             } else if (roll < 85) {
                 type = Contract.ContractType.WITH_BENEFICIARY;
                 beneficiary = randomClient(clients);
-                beneficiary.setIsBeneficiary(true);
             } else if (roll < 95) {
                 type = Contract.ContractType.WITH_AGENT;
                 agent = randomClient(clients);
@@ -167,16 +167,19 @@ public class TestDataGenerator implements CommandLineRunner {
                 type = Contract.ContractType.WITH_AGENT_AND_BENEFICIARY;
                 agent = randomClient(clients);
                 beneficiary = randomClient(clients);
-                beneficiary.setIsBeneficiary(true);
             }
 
             Contract contract = Contract.builder()
                     .contractNumber("DOG-" + String.format("%08d", i))
                     .contractType(type)
-                    .counterparty(counterparty)
-                    .agent(agent)
-                    .beneficiary(beneficiary)
                     .build();
+            contract.addParty(counterparty, ContractParty.Role.COUNTERPARTY);
+            if (agent != null) {
+                contract.addParty(agent, ContractParty.Role.AGENT);
+            }
+            if (beneficiary != null) {
+                contract.addParty(beneficiary, ContractParty.Role.BENEFICIARY);
+            }
 
             batch.add(contract);
 
@@ -214,7 +217,7 @@ public class TestDataGenerator implements CommandLineRunner {
                     .receiverInn(receiver.getInn())
                     .receiverAccount(generateAccountNumber(receiver.getClientType()))
                     .receiverName(displayName(receiver))
-                    .currencyCode("810")
+                    .currencyCode("643")
                     .amount(amount)
                     .amountRub(amount)
                     .paymentPurpose("Оплата по счету №" + RNG.nextInt(9999) + " от " + LocalDate.now())

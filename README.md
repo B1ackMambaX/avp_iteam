@@ -61,7 +61,7 @@ mvn spring-boot:run
 При успешном старте в логах будет:
 
 ```
-Flyway ... Successfully applied 1 migration to schema "public"
+Flyway ... Successfully applied 2 migrations to schema "public"
 ...
 Started AvpIteamApplication in X.XXX seconds
 ```
@@ -163,32 +163,52 @@ PID процесса выводится перед 10-секундной пау�
 
 ## Схема БД
 
-Три основные таблицы + служебная от Flyway:
+Миграции Flyway: `V1__init_schema.sql` (базовые таблицы),
+`V2__mapping_schema.sql` (схема под маппинг и очередь NLP).
 
 | Таблица | Назначение | Ключевые поля |
 |---|---|---|
-| `clients` | Клиенты банка (ФЛ, ИП, ЮЛ в одной таблице) | `inn`, `client_type`, `is_beneficiary`, `is_bank_client` |
-| `contracts` | Договоры с тремя ролями сторон | `contract_number`, `agent_id`, `counterparty_id`, `beneficiary_id` |
-| `operations` | Операции (платежи) из АБС | `reference`, `sender_inn`, `receiver_inn`, `contract_id`, `status` |
+| `clients` | Клиенты банка (ФЛ, ИП, ЮЛ в одной таблице) | `inn` (nullable), `client_type`, `full_name_norm`, `is_bank_client` |
+| `contracts` | Договоры | `contract_number`, `contract_number_norm`, `contract_type` |
+| `contract_parties` | Стороны договора в ролях `COUNTERPARTY` / `AGENT` / `BENEFICIARY` | `contract_id`, `client_id`, `role` |
+| `operations` | Операции (платежи) из АБС | `reference`, `sender_inn`, `receiver_inn`, `contract_id`, `status`, `mapped_by` |
+| `operation_parse_result` | Результаты парсинга назначения платежа (маркерный и NLP) | `operation_id`, `parser`, `extracted_name_norm`, `party_role`, `confidence` |
+| `operation_mapping_candidate` | Договоры-кандидаты для операции со скорингом | `operation_id`, `contract_id`, `score`, `matched_rules` |
+| `nlp_task` | Очередь задач на NLP-разбор | `operation_id`, `status`, `attempts`, `next_try_at`, `locked_until` |
 | `flyway_schema_history` | Служебная таблица миграций | - |
 
 ### Связи
 
-- `contracts.counterparty_id → clients.id` - вторая сторона договора
-- `contracts.agent_id → clients.id` - посредник (может отсутствовать)
-- `contracts.beneficiary_id → clients.id` - выгодоприобретатель (может отсутствовать)
-- `operations.contract_id → contracts.id` - привязанный договор (nullable, заполняется модулем маппинга)
+- `contract_parties.contract_id → contracts.id`, `contract_parties.client_id → clients.id` - стороны договора;
+  у договора может быть несколько сторон одной роли
+- `operations.contract_id → contracts.id` - итоговый привязанный договор (nullable, заполняется модулем маппинга)
+- `operation_parse_result.operation_id`, `operation_mapping_candidate.operation_id`, `nlp_task.operation_id → operations.id`
+- `operation_mapping_candidate.contract_id → contracts.id`
+
+Схемы ниже нарисованы для V1 и требуют обновления:
 
 ![db1.png](docs/db1.png)
 ![db2.png](docs/db2.png)
 
+### Нормализация для поиска
+
+Вычисляются в БД (generated columns), в Java только читаются:
+
+- `clients.full_name_norm` - `фамилия имя отчество` в нижнем регистре, `ё → е`, одиночные пробелы.
+  По тому же правилу считается `operation_parse_result.extracted_name_norm`,
+  поэтому ФИО из парсера сравнивается с клиентом простым равенством
+- `contracts.contract_number_norm` - только буквы и цифры, верхний регистр, `Ё → Е`
+  (`№ 110-кр` → `110КР`)
+
 ### Индексы для маппинга
 
-Главный рабочий запрос - поиск договора по ИНН из операции. Под него заложены:
+Маппинг ищет в `clients` и `contract_parties`, а не в `operations`:
 
-- `operations`: составной индекс `(sender_inn, receiver_inn, status)`
-- `contracts`: индексы по `counterparty_id`, `agent_id`, `beneficiary_id`
-- `clients`: индекс по `inn`
+- `clients`: `inn`, `full_name_norm`
+- `contract_parties`: `(client_id, role, contract_id)` - все договоры клиента одним индексным поиском
+- `contracts`: `contract_number_norm`
+- `operations`: частичный индекс по `id` для `status = 'PENDING'` - выборка пачками
+- `nlp_task`: частичные индексы для готовых (`NEW`) и зависших (`IN_PROGRESS`) задач
 
 ---
 

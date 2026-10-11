@@ -3,13 +3,12 @@ package com.bank.avpiteam.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Договор. Роли сторон разведены по смыслу, а не по движению денег:
- *  - agent        - посредник, действует от чьего-то имени (может отсутствовать)
- *  - counterparty - вторая сторона договора (плательщик/получатель - не фиксировано)
- *  - beneficiary  - тот, в чью пользу заключён договор (может отсутствовать)
+ * Договор. Стороны договора и их роли - в {@link ContractParty}.
  */
 @Entity
 @Table(name = "contracts")
@@ -29,39 +28,41 @@ public class Contract {
     @Column(name = "contract_type", nullable = false, length = 50)
     private ContractType contractType;
 
-    @Column(name = "contract_number", nullable = false, unique = true, length = 100)
+    // Уникальность номера не подтверждена заказчиком (вопрос 12 в вики)
+    @Column(name = "contract_number", nullable = false, length = 100)
     private String contractNumber;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "agent_id")
-    private Client agent;
+    // Вычисляется в БД (generated column) - только для чтения.
+    // После insert в памяти остаётся null, заполняется при следующей загрузке.
+    @Column(name = "contract_number_norm", length = 100, insertable = false, updatable = false)
+    private String contractNumberNorm;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "counterparty_id")
-    private Client counterparty;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "beneficiary_id")
-    private Client beneficiary;
+    @OneToMany(mappedBy = "contract", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<ContractParty> parties = new ArrayList<>();
 
     // "Запрос" - задел на будущее по ТЗ заказчика. Пока простое текстовое поле.
     @Column(name = "request_ref", length = 200)
     private String requestRef;
 
     @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
+    private OffsetDateTime createdAt;
 
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    private OffsetDateTime updatedAt;
+
+    public void addParty(Client client, ContractParty.Role role) {
+        parties.add(new ContractParty(this, client, role));
+    }
 
     @PrePersist
     void onCreate() {
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = OffsetDateTime.now();
     }
 
     @PreUpdate
     void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
+        this.updatedAt = OffsetDateTime.now();
     }
 
     /**

@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 /**
  * Клиент банка. Одна таблица для ФЛ, ИП и ЮЛ (MVP-вариант).
@@ -28,7 +28,8 @@ public class Client {
     @Column(name = "client_type", nullable = false, length = 20)
     private ClientType clientType;
 
-    @Column(name = "inn", nullable = false, length = 12)
+    // Может отсутствовать: выгодоприобретатель-физлицо приходит без ИНН
+    @Column(name = "inn", length = 12)
     private String inn;
 
     @Column(name = "pin", length = 6)
@@ -44,6 +45,11 @@ public class Client {
 
     @Column(name = "middle_name", length = 200)
     private String middleName;
+
+    // Нормализованное ФИО для поиска выгодоприобретателя. Вычисляется в БД
+    // (generated column) - только для чтения, после insert в памяти null.
+    @Column(name = "full_name_norm", insertable = false, updatable = false)
+    private String fullNameNorm;
 
     @Column(name = "birth_date")
     private LocalDate birthDate;
@@ -100,28 +106,24 @@ public class Client {
     @Builder.Default
     private Boolean isExtremist = false;
 
-    @Column(name = "is_beneficiary", nullable = false)
-    @Builder.Default
-    private Boolean isBeneficiary = false;
-
     @Column(name = "is_bank_client", nullable = false)
     @Builder.Default
     private Boolean isBankClient = false;
 
     @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
+    private OffsetDateTime createdAt;
 
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    private OffsetDateTime updatedAt;
 
     @PrePersist
     void onCreate() {
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = OffsetDateTime.now();
     }
 
     @PreUpdate
     void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
+        this.updatedAt = OffsetDateTime.now();
     }
 
     public enum ClientType {

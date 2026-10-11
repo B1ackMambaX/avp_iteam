@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 /**
  * Операция (платёж). Атрибуты соответствуют структуре,
@@ -67,7 +68,7 @@ public class Operation {
 
     @Column(name = "currency_code", nullable = false, length = 3)
     @Builder.Default
-    private String currencyCode = "810"; // RUB по умолчанию
+    private String currencyCode = "643"; // RUB по ISO 4217 / ОКВ
 
     @Column(name = "amount", nullable = false, precision = 19, scale = 2)
     private BigDecimal amount;
@@ -87,24 +88,32 @@ public class Operation {
     @JoinColumn(name = "contract_id")
     private Contract contract;
 
+    // Кто привязал договор: AUTO или логин оператора
+    @Column(name = "mapped_by", length = 100)
+    private String mappedBy;
+
+    @Column(name = "mapped_at")
+    private OffsetDateTime mappedAt;
+
     @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
+    private OffsetDateTime createdAt;
 
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    private OffsetDateTime updatedAt;
 
     @PrePersist
     void onCreate() {
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = OffsetDateTime.now();
     }
 
     @PreUpdate
     void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
+        this.updatedAt = OffsetDateTime.now();
     }
 
     public enum OperationStatus {
         PENDING,          // ещё не обработана
+        WAITING_NLP,      // платёж через третье лицо, ждёт разбора в очереди nlp_task
         AUTO_MAPPED,      // успешно привязана автоматически
         MANUAL_REQUIRED,  // требует ручной привязки
         AMBIGUOUS,        // несколько кандидатов на договор
