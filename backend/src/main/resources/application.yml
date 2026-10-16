@@ -30,6 +30,12 @@ spring:
 vaadin:
   launch-browser: true
 
+nlp:
+  service:
+    base-url: ${NLP_SERVICE_URL:http://localhost:8001}
+  semantic:
+    threshold: 0.75
+
 server:
   port: 8080
 
