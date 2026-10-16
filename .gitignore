@@ -1,0 +1,30 @@
+# Java / Maven
+backend/target/
+*.class
+*.jar
+
+# IntelliJ
+.idea/
+*.iml
+out/
+
+# Python
+**/__pycache__/
+nlp-service/venv/
+*.pyc
+
+# Vaadin generated
+backend/src/main/frontend/generated/
+backend/src/main/frontend/node_modules/
+backend/src/main/frontend/package-lock.json
+backend/src/main/frontend/pnpm-lock.yaml
+backend/src/main/frontend/index.html
+backend/src/main/frontend/sw.ts
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Логи
+*.log
+schema.sql

@@ -1,0 +1,4 @@
+datagen:
+  clients-count: 10000
+  contracts-count: 100000
+  operations-count: 1000
