@@ -95,6 +95,10 @@ public class Operation {
     @Column(name = "mapped_at")
     private OffsetDateTime mappedAt;
 
+    // Почему маппинг принял решение (см. MappingDecider.Reason)
+    @Column(name = "mapping_reason", length = 40)
+    private String mappingReason;
+
     @Column(name = "created_at", nullable = false)
     private OffsetDateTime createdAt;
 
@@ -113,7 +117,8 @@ public class Operation {
 
     public enum OperationStatus {
         PENDING,          // ещё не обработана
-        WAITING_NLP,      // платёж через третье лицо, ждёт разбора в очереди nlp_task
+        WAITING_NLP,      // ждёт разбора назначения платежа в очереди nlp_task
+        PARSED,           // назначение разобрано, ждёт маппинга
         AUTO_MAPPED,      // успешно привязана автоматически
         MANUAL_REQUIRED,  // требует ручной привязки
         AMBIGUOUS,        // несколько кандидатов на договор
