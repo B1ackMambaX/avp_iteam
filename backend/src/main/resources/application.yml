@@ -36,6 +36,23 @@ nlp:
   semantic:
     threshold: 0.75
 
+# Конвейер: PENDING -> разбор назначения -> PARSED -> маппинг. Подробно - docs/mapping.md
+pipeline:
+  # nlp - через очередь nlp_task и Python-сервис; marker - regex-парсер без Python
+  parser: ${PIPELINE_PARSER:nlp}
+  scheduler:
+    enabled: ${PIPELINE_SCHEDULER:false}
+
+mapping:
+  batch-size: 500
+  auto-threshold: 0.6
+  min-gap: 0.2
+  weights:
+    party: 0.4
+    both-sides: 0.2
+    contract-number: 0.4
+    beneficiary-name: 0.3
+
 server:
   port: 8080
 
