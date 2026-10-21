@@ -1,0 +1,10 @@
+# Демо маппинга на объёме: см. docs/mapping.md, раздел "Как записать демо"
+demo:
+  clients: 300000
+  contracts: 1000000
+  operations: 10000
+  seed: 42
+
+logging:
+  level:
+    com.bank.avpiteam: INFO
