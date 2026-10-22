@@ -161,6 +161,18 @@ python benchmark/run_benchmark.py
 PID процесса выводится перед 10-секундной паузой для подключения
 системного монитора (Диспетчер задач / Activity Monitor / htop).
 
+## 6. Маппинг операций на договоры
+
+Конвейер `PENDING → разбор назначения → PARSED → маппинг` и правила скоринга описаны
+в [`docs/mapping.md`](docs/mapping.md). Быстрый прогон на демо-данных без Python:
+
+```bash
+cd backend
+mvn spring-boot:run -Dspring-boot.run.profiles=demo -Dspring-boot.run.arguments=--pipeline.parser=marker
+curl -X POST localhost:8080/api/pipeline/run
+curl localhost:8080/api/demo/report
+```
+
 ## Схема БД
 
 Миграции Flyway: `V1__init_schema.sql` (базовые таблицы),
