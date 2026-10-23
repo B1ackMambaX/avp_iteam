@@ -3,7 +3,7 @@ spring:
     name: avp-iteam
 
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/avp_iteam}
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/avp_iteam?useUnicode=true&characterEncoding=UTF-8}
     username: ${DB_USER:avp_iteam_user}
     password: ${DB_PASSWORD:avp_iteam_pass}
     hikari:

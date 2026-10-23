@@ -461,6 +461,10 @@ public class DemoDataGenerator implements CommandLineRunner {
             return numberAndParty(c, clients, rnd, seq);
         }
         ClientInfo beneficiary = clients.get(c.beneficiaryId());
+
+        if (beneficiary == null || !beneficiary.individual()) {
+            return numberAndParty(c, clients, rnd, seq);
+        }
         String purpose;
         if (scenario == DemoScenario.THIRD_PARTY_NUMBER) {
             String number = numberVariant(c.number(), rnd);

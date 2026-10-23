@@ -2,7 +2,7 @@ package com.bank.avpiteam.client;
 
 public interface NlpServiceClient {
 
-    ClassificationResponse classify(String paymentPurpose);
+    ClassificationResponse classify(String paymentPurpose, double threshold);
 
     ExtractionResponse extractName(String paymentPurpose);
 
@@ -10,3 +10,4 @@ public interface NlpServiceClient {
 
     record ExtractionResponse(String fullName) {}
 }
+

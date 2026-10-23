@@ -24,6 +24,7 @@ class ParseResponse(BaseModel):
 
 class TextRequest(BaseModel):
     text: str
+    threshold: float = 0.5
 
 class ClassifyResponse(BaseModel):
     isThirdParty: bool
@@ -38,7 +39,7 @@ def health():
 
 @app.post("/classify", response_model=ClassifyResponse)
 def classify(request: TextRequest):
-    result = classify_by_similarity(request.text)
+    result = classify_by_similarity(request.text, threshold=request.threshold)
     return ClassifyResponse(
         isThirdParty=result["third_party"],
         score=float(result["positive_similarity"] or 0.0),

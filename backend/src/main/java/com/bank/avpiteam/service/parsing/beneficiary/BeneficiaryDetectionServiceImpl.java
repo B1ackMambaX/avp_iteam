@@ -23,8 +23,8 @@ public class BeneficiaryDetectionServiceImpl implements BeneficiaryDetectionServ
     public BeneficiaryDetectionResult detect(Operation operation) {
         String purpose = operation.getPaymentPurpose();
 
-        var classification = nlpServiceClient.classify(purpose);
-        boolean isThirdParty = classification.isThirdParty() && classification.score() >= semanticThreshold;
+        var classification = nlpServiceClient.classify(purpose, semanticThreshold);
+        boolean isThirdParty = classification.isThirdParty();
 
         if (!isThirdParty) {
             return new BeneficiaryDetectionResult(

@@ -8,6 +8,7 @@ services:
       POSTGRES_DB: avp_iteam
       POSTGRES_USER: avp_iteam_user
       POSTGRES_PASSWORD: avp_iteam_pass
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
     ports:
       - "5432:5432"
     volumes:

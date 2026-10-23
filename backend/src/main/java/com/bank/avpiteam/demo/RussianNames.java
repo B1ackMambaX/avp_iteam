@@ -10,6 +10,11 @@ final class RussianNames {
     }
 
     static String genitive(String lastName, String firstName, String middleName, boolean female) {
+        // Защита от null, чтобы не падало на юрлицах
+        if (lastName == null) lastName = "";
+        if (firstName == null) firstName = "";
+        if (middleName == null) middleName = "";
+
         return String.join(" ",
                 female ? femaleLastName(lastName) : lastName + "а",
                 female ? femaleFirstName(firstName) : maleFirstName(firstName),
@@ -18,12 +23,14 @@ final class RussianNames {
 
     // Иванова -> Ивановой, Ильина -> Ильиной
     private static String femaleLastName(String name) {
+        if (name == null || name.isEmpty()) return "";
         return replaceEnd(name, "а", "ой");
     }
 
     // Иван -> Ивана, Сергей -> Сергея, Игорь -> Игоря, Илья -> Ильи
     private static String maleFirstName(String name) {
-        if (name.endsWith("й") || name.endsWith("ь")) {
+        if (name == null || name.isEmpty()) return "";
+        if (name.endsWith("й") || name.endsWith("ь"))  {
             return name.substring(0, name.length() - 1) + "я";
         }
         if (name.endsWith("я")) {
@@ -34,6 +41,7 @@ final class RussianNames {
 
     // Мария -> Марии, Дарья -> Дарьи, Ольга -> Ольги, Анна -> Анны, Любовь -> Любови
     private static String femaleFirstName(String name) {
+        if (name == null || name.isEmpty()) return "";
         if (name.endsWith("ия")) {
             return replaceEnd(name, "ия", "ии");
         }
@@ -48,6 +56,7 @@ final class RussianNames {
     }
 
     private static String replaceEnd(String value, String suffix, String replacement) {
+        if (value == null) return "";
         return value.endsWith(suffix)
                 ? value.substring(0, value.length() - suffix.length()) + replacement
                 : value;

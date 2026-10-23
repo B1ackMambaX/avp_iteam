@@ -15,10 +15,10 @@ public class NlpServiceClientImpl implements NlpServiceClient {
     }
 
     @Override
-    public ClassificationResponse classify(String paymentPurpose) {
+    public ClassificationResponse classify(String paymentPurpose, double threshold) {
         return webClient.post()
                 .uri("/classify")
-                .bodyValue(new TextRequest(paymentPurpose))
+                .bodyValue(new ClassifyRequest(paymentPurpose, threshold))
                 .retrieve()
                 .bodyToMono(ClassificationResponse.class)
                 .block();
@@ -28,11 +28,12 @@ public class NlpServiceClientImpl implements NlpServiceClient {
     public ExtractionResponse extractName(String paymentPurpose) {
         return webClient.post()
                 .uri("/extract-name")
-                .bodyValue(new TextRequest(paymentPurpose))
+                .bodyValue(new ExtractRequest(paymentPurpose))
                 .retrieve()
                 .bodyToMono(ExtractionResponse.class)
                 .block();
     }
 
-    private record TextRequest(String text) {}
+    private record ClassifyRequest(String text, double threshold) {}
+    private record ExtractRequest(String text) {}
 }
