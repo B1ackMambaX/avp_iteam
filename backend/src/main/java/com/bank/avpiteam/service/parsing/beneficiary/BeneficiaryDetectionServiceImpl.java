@@ -4,23 +4,32 @@ import com.bank.avpiteam.client.NlpServiceClient;
 import com.bank.avpiteam.domain.Operation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.util.Locale;
+import com.bank.avpiteam.service.mapping.Normalization;
+import java.util.Objects;
 
 @Service
 public class BeneficiaryDetectionServiceImpl implements BeneficiaryDetectionService {
 
     private final NlpServiceClient nlpServiceClient;
     private final double semanticThreshold;
+    private final DetectionMetrics metrics;
 
     public BeneficiaryDetectionServiceImpl(NlpServiceClient nlpServiceClient,
-                                           @Value("${nlp.semantic.threshold}") double semanticThreshold) {
+                                           @Value("${nlp.semantic.threshold}") double semanticThreshold,
+                                           DetectionMetrics metrics) {
         this.nlpServiceClient = nlpServiceClient;
         this.semanticThreshold = semanticThreshold;
+        this.metrics = metrics;
     }
 
     @Override
     public BeneficiaryDetectionResult detect(Operation operation) {
+        BeneficiaryDetectionResult result = metrics.time(() -> doDetect(operation));
+        metrics.record(result);
+        return result;
+    }
+
+    private BeneficiaryDetectionResult doDetect(Operation operation) {
         String purpose = operation.getPaymentPurpose();
 
         var classification = nlpServiceClient.classify(purpose, semanticThreshold);
@@ -41,23 +50,15 @@ public class BeneficiaryDetectionServiceImpl implements BeneficiaryDetectionServ
         );
     }
 
-    /**
-     * Черновая сверка (вопрос 6 в ответах заказчика): если извлечённое имя совпадает
-     * с отправителем или получателем операции — это не третье лицо, а ложное
-     * срабатывание классификатора на формулировках вида "перевод за ...".
-     * TODO: заменить normalize() на общую SQL/Java-функцию normalize_full_name,
-     * если второй бэк вынесет её в БД (см. комментарий к PR).
-     */
     private boolean isGenuineThirdParty(String extractedName, Operation operation) {
-        String normalizedExtracted = normalize(extractedName);
-        return !normalizedExtracted.equals(normalize(operation.getSenderName()))
-                && !normalizedExtracted.equals(normalize(operation.getReceiverName()));
+        return isNotOperationParty(extractedName, operation.getSenderName(), operation.getReceiverName());
+    }
+    // TODO: то же правило есть в IntakeService.isNotOperationParty (marker-режим).
+    //Свести в одно место, согласовав с коллегой (зона mapping/pipeline).
+    static boolean isNotOperationParty(String extractedName, String senderName, String receiverName) {
+        String name = Normalization.fullName(extractedName);
+        return !Objects.equals(name, Normalization.fullName(senderName))
+                && !Objects.equals(name, Normalization.fullName(receiverName));
     }
 
-    private String normalize(String name) {
-        if (name == null) return "";
-        return name.trim()
-                .toLowerCase(Locale.of("ru"))
-                .replaceAll("\\s+", " ");
-    }
 }

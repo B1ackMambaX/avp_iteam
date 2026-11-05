@@ -60,3 +60,15 @@ logging:
   level:
     com.bank.avpiteam: DEBUG
     org.springframework.web: INFO
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  metrics:
+    tags:
+      application: avp_iteam
+    distribution:
+      percentiles-histogram:
+        avpiteam.nlp.detect: true

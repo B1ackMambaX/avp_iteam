@@ -9,9 +9,14 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from app.parser import parse_payment_purpose, extract_beneficiary_name
 from app.semantic_classifier import classify_by_similarity
+from prometheus_fastapi_instrumentator import Instrumentator
+from app.metrics import CLASSIFY_TOTAL, EXTRACT_NAME_TOTAL
 
 app = FastAPI(title="AVP iTeam NLP Service")
 
+Instrumentator(excluded_handlers=["/metrics"]).instrument(app).expose(
+    app, endpoint="/metrics", include_in_schema=False
+)
 
 class ParseRequest(BaseModel):
     text: str
@@ -29,6 +34,7 @@ class TextRequest(BaseModel):
 class ClassifyResponse(BaseModel):
     isThirdParty: bool
     score: float
+    decision: str
 
 class ExtractResponse(BaseModel):
     fullName: str | None
@@ -40,14 +46,24 @@ def health():
 @app.post("/classify", response_model=ClassifyResponse)
 def classify(request: TextRequest):
     result = classify_by_similarity(request.text, threshold=request.threshold)
+
+    CLASSIFY_TOTAL.labels(
+        decision=result["decision"],
+        is_third_party=str(result["third_party"]).lower(),
+    ).inc()
+
     return ClassifyResponse(
         isThirdParty=result["third_party"],
         score=float(result["positive_similarity"] or 0.0),
+        decision=result["decision"]
     )
 
 @app.post("/extract-name", response_model=ExtractResponse)
 def extract_name(request: TextRequest):
     name = extract_beneficiary_name(request.text, 0)
+
+    EXTRACT_NAME_TOTAL.labels(found="true" if name else "false").inc()
+
     return ExtractResponse(fullName=name)
 
 @app.post("/parse")

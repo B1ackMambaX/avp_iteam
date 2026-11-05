@@ -109,43 +109,46 @@ def _merge_adjacent_per_spans(per_spans, text):
             merged.append((span.start, span.stop))
     return merged
 
+from app.name_normalizer import normalize_fio_nominative
+from app.metrics import NAME_NORMALIZE_TOTAL
 
 def _normalize_name_slice(text_slice: str) -> str | None:
-    """
-    Прогоняет вырезанный фрагмент ФИО как отдельный мини-документ через
-    полный NER-пайплайн Natasha заново. Без окружающего контекста (остального
-    текста назначения платежа) модель, как правило, корректно распознаёт
-    весь фрагмент как ОДИН PER-спан и .normalize() даёт согласованную
-    по роду/падежу форму - тот же метод, что в оригинальной реализации,
-    просто применённый к уже склеенному диапазону, а не к сырым спанам
-    из полного текста.
-    """
-    mini_doc = Doc(text_slice)
-    mini_doc.segment(_segmenter)
-    mini_doc.tag_morph(_morph_tagger)
-    mini_doc.tag_ner(_ner_tagger)
 
-    mini_per_spans = [s for s in mini_doc.spans if s.type == PER]
+    fixed = normalize_fio_nominative(text_slice)
+    if fixed:
+        NAME_NORMALIZE_TOTAL.labels(path="gender_aware").inc()
+        return fixed
+    NAME_NORMALIZE_TOTAL.labels(path="natasha_fallback").inc()
+    return _normalize_name_slice_natasha(text_slice)
 
-    if not mini_per_spans:
-        # NER не увидела сущность даже в изолированном фрагменте -
-        # не должно происходить часто, но на всякий случай fallback:
-        # возвращаем исходный фрагмент как есть, без нормализации,
-        # лучше отдать что-то, чем ничего.
-        return text_slice.strip()
-
-    if len(mini_per_spans) == 1:
-        mini_per_spans[0].normalize(_morph_vocab)
-        return mini_per_spans[0].normal
-
-    # Редкий случай: даже на изолированном фрагменте распалось на
-    # несколько спанов. Нормализуем каждый отдельно и склеиваем -
-    # не идеально, но не теряем часть имени, как было в баге раньше.
-    parts = []
-    for span in mini_per_spans:
-        span.normalize(_morph_vocab)
-        parts.append(span.normal)
-    return " ".join(parts)
+def _normalize_name_slice_natasha(text_slice: str) -> str | None:
+   """Запасной путь. Прогоняет фрагмент как мини-документ через Natasha
+       и берёт span.normalize(). Род не учитывает: женскую фамилию в именительном
+       падеже («Волкова») может превратить в мужскую («Волков»).
+       Если NER ничего не нашёл, возвращает фрагмент без изменений.
+       """
+   mini_doc = Doc(text_slice)
+   mini_doc.segment(_segmenter)
+   mini_doc.tag_morph(_morph_tagger)
+   mini_doc.tag_ner(_ner_tagger)
+   mini_per_spans = [s for s in mini_doc.spans if s.type == PER]
+   if not mini_per_spans:
+       # NER не увидела сущность даже в изолированном фрагменте -
+       # не должно происходить часто, но на всякий случай fallback:
+       # возвращаем исходный фрагмент как есть, без нормализации,
+       # лучше отдать что-то, чем ничего.
+       return text_slice.strip()
+   if len(mini_per_spans) == 1:
+       mini_per_spans[0].normalize(_morph_vocab)
+       return mini_per_spans[0].normal
+   # Редкий случай: даже на изолированном фрагменте распалось на
+   # несколько спанов. Нормализуем каждый отдельно и склеиваем -
+   # не идеально, но не теряем часть имени, как было в баге раньше.
+   parts = []
+   for span in mini_per_spans:
+       span.normalize(_morph_vocab)
+       parts.append(span.normal)
+   return " ".join(parts)
 
 
 def extract_beneficiary_name(text: str, marker_position: int) -> str | None:

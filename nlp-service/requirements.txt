@@ -3,3 +3,5 @@ uvicorn[standard]==0.32.0
 natasha==1.6.0
 psutil==6.1.0
 setuptools<81
+prometheus-fastapi-instrumentator>=7.0,<8
+pymorphy3

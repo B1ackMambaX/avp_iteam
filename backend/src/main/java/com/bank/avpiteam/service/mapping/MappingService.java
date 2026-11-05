@@ -36,6 +36,7 @@ public class MappingService {
     private final CandidateScorer scorer;
     private final MappingDecider decider;
     private final MappingProperties properties;
+    private final MappingMetrics metrics;
 
     public record BatchResult(int processed, Map<String, Integer> byStatus, long millis) {
 
@@ -140,6 +141,7 @@ public class MappingService {
         long millis = (System.nanoTime() - started) / 1_000_000;
         log.info("Маппинг: {} операций за {} мс, статусы {}, причины {}",
                 operations.size(), millis, byStatus, byReason);
+        metrics.recordBatch(operations.size(), byStatus, System.nanoTime() - started);
         return new BatchResult(operations.size(), byStatus, millis);
     }
 

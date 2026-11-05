@@ -1,6 +1,7 @@
 import re
 import numpy as np
 from natasha import NewsEmbedding
+from app.metrics import EMBEDDING_SECONDS
 
 _emb = NewsEmbedding()
 
@@ -22,8 +23,7 @@ NEGATIVE_EXAMPLES = [
     "погашение кредита по собственному договору",
     "оплата коммунальных услуг",
     "перевод между своими счетами",
-    # договоры поставки/подряда/аренды — отдельная категория,
-    # именно она давала ложные срабатывания на проде
+    # договоры поставки/подряда/аренды — отдельная категория
     "оплата по договору поставки товара",
     "оплата по договору подряда за выполненные работы",
     "оплата аренды помещения по договору",
@@ -97,6 +97,7 @@ def classify_by_similarity(text: str, threshold: float = 0.5) -> dict:
             "negative_similarity": None,
             "negated": False,
             "no_trigger": True,
+            "decision": "GATED"
         }
 
     if _has_negation_near_trigger(lower):
@@ -106,13 +107,14 @@ def classify_by_similarity(text: str, threshold: float = 0.5) -> dict:
             "negative_similarity": None,
             "negated": True,
             "no_trigger": False,
+            "decision": "NEGATED"
         }
 
-    vec = _sentence_vector(text)
-    max_positive_sim = max(_cosine_similarity(vec, p) for p in _positive_vectors)
-    max_negative_sim = max(_cosine_similarity(vec, n) for n in _negative_vectors)
-
-    is_third_party = max_positive_sim > threshold and max_positive_sim > max_negative_sim
+    with EMBEDDING_SECONDS.time():
+        vec = _sentence_vector(text)
+        max_positive_sim = max(_cosine_similarity(vec, p) for p in _positive_vectors)
+        max_negative_sim = max(_cosine_similarity(vec, n) for n in _negative_vectors)
+        is_third_party = max_positive_sim > threshold and max_positive_sim > max_negative_sim
 
     return {
         "third_party": is_third_party,
@@ -120,4 +122,5 @@ def classify_by_similarity(text: str, threshold: float = 0.5) -> dict:
         "negative_similarity": round(max_negative_sim, 3),
         "negated": False,
         "no_trigger": False,
+        "decision": "SEMANTIC"
     }

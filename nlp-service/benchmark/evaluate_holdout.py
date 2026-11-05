@@ -34,4 +34,4 @@ def evaluate_holdout(path="holdout.csv", threshold=0.5):
           f"tp={tp} fp={fp} tn={tn} fn={fn}")
 
 if __name__ == "__main__":
-    evaluate_holdout(path="../../data/holdout-dataset.csv")
+    evaluate_holdout(path="../../data/holdout-dataset.csv", threshold=0.75)
