@@ -105,15 +105,17 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--service-rev", default="unknown",
                     help="git hash кода, из которого запущен nlp-service")
+    ap.add_argument("--set", dest="set_file", default="eval_set_v1.csv")
+    ap.add_argument("--out", default="results")
     args = ap.parse_args()
 
-    with open(ROOT / "eval_set_v1.csv", encoding="utf-8-sig", newline="") as f:
+    with open(ROOT / args.set_file, encoding="utf-8-sig", newline="") as f:
         data = list(csv.DictReader(f))
 
-    out_dir = ROOT / "results"
+    out_dir = ROOT / args.out
     out_dir.mkdir(exist_ok=True)
     summary = {
-        "eval_set_commit": git("log", "-1", "--format=%h", "--", "eval_set_v1.csv"),
+        "eval_set_commit": git("log", "-1", "--format=%h", "--", args.set_file),
         "script_head": git("rev-parse", "--short", "HEAD"),
         "service_rev": args.service_rev,
         "variants": {},
