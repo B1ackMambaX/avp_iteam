@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 public class NlpTaskWorker {
 
     private static final int MAX_ERROR_LENGTH = 1000;
-
+    private final StageTimers stages;
     private final NamedParameterJdbcTemplate jdbc;
     private final TransactionTemplate tx;
     private final OperationRepository operationRepository;
@@ -51,7 +51,8 @@ public class NlpTaskWorker {
                          OperationRepository operationRepository,
                          BeneficiaryDetectionService detectionService,
                          ParseResultWriter parseResultWriter,
-                         PipelineProperties properties) {
+                         PipelineProperties properties,
+                         StageTimers stages) {
         this.jdbc = jdbc;
         this.tx = new TransactionTemplate(transactionManager);
         this.operationRepository = operationRepository;
@@ -59,6 +60,7 @@ public class NlpTaskWorker {
         this.parseResultWriter = parseResultWriter;
         this.properties = properties.getNlp();
         this.executor = Executors.newFixedThreadPool(this.properties.getParallelism());
+        this.stages = stages;
     }
 
     @PreDestroy
@@ -78,18 +80,22 @@ public class NlpTaskWorker {
     }
 
     public BatchResult processBatch() {
-        List<Claim> claims = tx.execute(status -> claim());
+        // 1. Захват задач
+        List<Claim> claims = stages.time("claim", () -> tx.execute(status -> claim()));
         if (claims == null || claims.isEmpty()) {
             return BatchResult.EMPTY;
         }
 
-        Map<Long, Operation> operations = operationRepository
+        // 2. Загрузка операций
+        Map<Long, Operation> operations = stages.time("load_ops", () -> operationRepository
                 .findAllById(claims.stream().map(Claim::operationId).toList())
                 .stream()
-                .collect(Collectors.toMap(Operation::getId, Function.identity()));
+                .collect(Collectors.toMap(Operation::getId, Function.identity())));
 
-        // Запросы к NLP-сервису параллельно: время пачки - не сумма задержек, а примерно максимум
+        // 3. Отправка в NLP (параллельно)
         List<Future<ParseRecord>> futures = new ArrayList<>(claims.size());
+        long callsStart = System.nanoTime(); // <-- НАЧАЛО ЗАМЕРА NLP_CALLS
+
         for (Claim claim : claims) {
             Operation operation = operations.get(claim.operationId());
             futures.add(operation == null ? null : executor.submit(() -> detect(operation)));
@@ -98,6 +104,7 @@ public class NlpTaskWorker {
         List<Claim> succeeded = new ArrayList<>();
         List<ParseRecord> records = new ArrayList<>();
         List<Failure> failures = new ArrayList<>();
+
         for (int i = 0; i < claims.size(); i++) {
             Claim claim = claims.get(i);
             Future<ParseRecord> future = futures.get(i);
@@ -117,10 +124,14 @@ public class NlpTaskWorker {
             }
         }
 
-        int[] retriedAndFailed = tx.execute(status -> {
+        stages.record("nlp_calls", System.nanoTime() - callsStart); // <-- КОНЕЦ ЗАМЕРА NLP_CALLS
+
+        // 4. Сохранение результатов
+        int[] retriedAndFailed = stages.time("save", () -> tx.execute(status -> {
             saveSuccesses(succeeded, records);
             return saveFailures(failures);
-        });
+        }));
+
         BatchResult result = new BatchResult(claims.size(), succeeded.size(),
                 retriedAndFailed[0], retriedAndFailed[1]);
         if (!failures.isEmpty()) {

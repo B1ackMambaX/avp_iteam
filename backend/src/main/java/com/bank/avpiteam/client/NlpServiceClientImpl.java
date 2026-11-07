@@ -3,6 +3,7 @@ package com.bank.avpiteam.client;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import java.util.List;
 
 @Component
 public class NlpServiceClientImpl implements NlpServiceClient {
@@ -15,10 +16,11 @@ public class NlpServiceClientImpl implements NlpServiceClient {
     }
 
     @Override
-    public ClassificationResponse classify(String paymentPurpose, double threshold) {
+    public ClassificationResponse classify(String paymentPurpose, double threshold,
+                                           List<String> triggerWords, List<String> negationWords) {
         return webClient.post()
                 .uri("/classify")
-                .bodyValue(new ClassifyRequest(paymentPurpose, threshold))
+                .bodyValue(new ClassifyRequest(paymentPurpose, threshold, triggerWords, negationWords))
                 .retrieve()
                 .bodyToMono(ClassificationResponse.class)
                 .block();
@@ -34,6 +36,7 @@ public class NlpServiceClientImpl implements NlpServiceClient {
                 .block();
     }
 
-    private record ClassifyRequest(String text, double threshold) {}
+    private record ClassifyRequest(String text, double threshold,
+                                   List<String> triggerWords, List<String> negationWords) {}
     private record ExtractRequest(String text) {}
 }

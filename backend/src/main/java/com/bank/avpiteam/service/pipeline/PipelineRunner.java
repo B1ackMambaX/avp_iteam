@@ -26,7 +26,7 @@ public class PipelineRunner {
     private final MappingService mappingService;
     private final PipelineProperties properties;
     private final JdbcTemplate jdbc;
-
+    private final StageTimers stages;
     public record RunReport(
             String parser,
             long millis,
@@ -61,18 +61,18 @@ public class PipelineRunner {
                 timedOut = true;
                 break;
             }
-            int accepted = intakeService.intakeBatch();
+            int accepted = stages.time("intake", intakeService::intakeBatch);
             intake += accepted;
 
             NlpTaskWorker.BatchResult nlp = NlpTaskWorker.BatchResult.EMPTY;
             if (properties.getParser() == PipelineProperties.ParserMode.NLP) {
-                nlp = nlpTaskWorker.processBatch();
+                nlp = stages.time("nlp_batch", nlpTaskWorker::processBatch);
                 nlpDone += nlp.done();
                 nlpRetried += nlp.retried();
                 nlpFailed += nlp.failed();
             }
 
-            MappingService.BatchResult batch = mappingService.mapBatch();
+            MappingService.BatchResult batch = stages.time("map", mappingService::mapBatch);
             mapped += batch.processed();
             mappingMillis += batch.millis();
             batch.byStatus().forEach((status, count) -> byStatus.merge(status, count, Integer::sum));

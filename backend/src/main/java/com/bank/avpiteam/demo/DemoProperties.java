@@ -17,4 +17,13 @@ public class DemoProperties {
     private int operations = 10_000;
 
     private long seed = 42;
+    private Chaos chaos = new Chaos();
+
+    @Getter @Setter
+    public static class Chaos {
+        private double partialNameOnlyPercent = 0;
+        private double noisyNumberWithPartyPercent = 0;
+        private double partialNameSingleContractPercent = 0;
+        private double noisyNumberSingleContractPercent = 0;
+    }
 }

@@ -2,7 +2,7 @@ import re
 import numpy as np
 from natasha import NewsEmbedding
 from app.metrics import EMBEDDING_SECONDS
-
+from app.gate_patterns import get_gate_patterns
 _emb = NewsEmbedding()
 
 POSITIVE_EXAMPLES = [
@@ -39,12 +39,7 @@ NEGATIVE_EXAMPLES = [
 # ВАЖНО: добавлены "польз" и "выгодоприобретател" — это прямые маркеры,
 # которые заказчик назвал как используемые в legacy (ответ на вопрос 6).
 # Без них классификация пропускает канонические фразы "в пользу ...".
-TRIGGER_WORDS_PATTERN = re.compile(
-    r"\b(треть\w*|лиц\w*|интерес\w*|счет\w*|правопреемник\w*|"
-    r"довереннос\w*|цессионар\w*|контрагент\w*|польз\w*|выгодоприобретател\w*)\b"
-)
 
-NEGATION_PATTERN = re.compile(r"\b(не|нет|отсутств\w*|без)\b")
 
 NEGATION_WINDOW = 20
 
@@ -64,16 +59,16 @@ def _cosine_similarity(a: np.ndarray, b: np.ndarray) -> float:
     return float(np.dot(a, b) / denom)
 
 
-def _has_trigger_word(lower_text: str) -> bool:
-    return TRIGGER_WORDS_PATTERN.search(lower_text) is not None
+def _has_trigger_word(lower_text: str, trigger_re) -> bool:
+    return trigger_re.search(lower_text) is not None
 
 
-def _has_negation_near_trigger(lower_text: str, window: int = NEGATION_WINDOW) -> bool:
-    for match in TRIGGER_WORDS_PATTERN.finditer(lower_text):
+def _has_negation_near_trigger(lower_text: str, trigger_re, negation_re, window: int = NEGATION_WINDOW) -> bool:
+    for match in trigger_re.finditer(lower_text):
         start = max(0, match.start() - window)
         end = min(len(lower_text), match.end() + window)
         surrounding = lower_text[start:end]
-        if NEGATION_PATTERN.search(surrounding):
+        if negation_re.search(surrounding):
             return True
     return False
 
@@ -82,15 +77,17 @@ _positive_vectors = [_sentence_vector(p) for p in POSITIVE_EXAMPLES]
 _negative_vectors = [_sentence_vector(n) for n in NEGATIVE_EXAMPLES]
 
 
-def classify_by_similarity(text: str, threshold: float = 0.5) -> dict:
+def classify_by_similarity(text: str, threshold: float = 0.5, trigger_re=None, negation_re=None) -> dict:
+    if trigger_re is None or negation_re is None:
+        default_trigger, default_negation = get_gate_patterns()
+        if trigger_re is None:
+            trigger_re = default_trigger
+        if negation_re is None:
+            negation_re = default_negation
+
     lower = text.lower()
 
-    # НОВОЕ: gate по триггерным словам. Если в тексте вообще нет
-    # ни одного маркера третьего лица — не считаем сходство, сразу False.
-    # Это убирает ложные срабатывания на обычных финансовых текстах
-    # ("оплата по договору поставки", "компенсация морального ущерба"),
-    # которые раньше получали высокий score из-за усреднения частых слов.
-    if not _has_trigger_word(lower):
+    if not _has_trigger_word(lower, trigger_re):
         return {
             "third_party": False,
             "positive_similarity": None,
@@ -100,7 +97,7 @@ def classify_by_similarity(text: str, threshold: float = 0.5) -> dict:
             "decision": "GATED"
         }
 
-    if _has_negation_near_trigger(lower):
+    if _has_negation_near_trigger(lower, trigger_re, negation_re):
         return {
             "third_party": False,
             "positive_similarity": None,

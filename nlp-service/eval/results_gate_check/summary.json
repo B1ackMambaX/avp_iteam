@@ -1,0 +1,490 @@
+{
+  "eval_set_commit": "9b95d25",
+  "script_head": "47751f3",
+  "service_rev": "47751f3",
+  "variants": {
+    "A_0.5": {
+      "groups": {
+        "all": {
+          "n": 28,
+          "tp": 8,
+          "fp": 1,
+          "fn": 9,
+          "tn": 10,
+          "precision": 0.889,
+          "recall": 0.471,
+          "f1": 0.615
+        },
+        "cat:full_name": {
+          "n": 6,
+          "tp": 3,
+          "fp": 0,
+          "fn": 3,
+          "tn": 0,
+          "precision": 1.0,
+          "recall": 0.5,
+          "f1": 0.667
+        },
+        "cat:no_name": {
+          "n": 2,
+          "tp": 1,
+          "fp": 0,
+          "fn": 1,
+          "tn": 0,
+          "precision": 1.0,
+          "recall": 0.5,
+          "f1": 0.667
+        },
+        "cat:name_no_marker": {
+          "n": 1,
+          "tp": 0,
+          "fp": 0,
+          "fn": 1,
+          "tn": 0,
+          "precision": null,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "cat:trap_words": {
+          "n": 4,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 4,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "cat:negation": {
+          "n": 3,
+          "tp": 0,
+          "fp": 1,
+          "fn": 0,
+          "tn": 2,
+          "precision": 0.0,
+          "recall": null,
+          "f1": 0.0
+        },
+        "cat:vat_service": {
+          "n": 3,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 3,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "cat:caps_typos": {
+          "n": 3,
+          "tp": 1,
+          "fp": 0,
+          "fn": 1,
+          "tn": 1,
+          "precision": 1.0,
+          "recall": 0.5,
+          "f1": 0.667
+        },
+        "cat:initials": {
+          "n": 3,
+          "tp": 1,
+          "fp": 0,
+          "fn": 2,
+          "tn": 0,
+          "precision": 1.0,
+          "recall": 0.333,
+          "f1": 0.5
+        },
+        "cat:incomplete": {
+          "n": 3,
+          "tp": 2,
+          "fp": 0,
+          "fn": 1,
+          "tn": 0,
+          "precision": 1.0,
+          "recall": 0.667,
+          "f1": 0.8
+        },
+        "near": {
+          "n": 8,
+          "tp": 5,
+          "fp": 0,
+          "fn": 3,
+          "tn": 0,
+          "precision": 1.0,
+          "recall": 0.625,
+          "f1": 0.769
+        },
+        "clean": {
+          "n": 20,
+          "tp": 3,
+          "fp": 1,
+          "fn": 6,
+          "tn": 10,
+          "precision": 0.75,
+          "recall": 0.333,
+          "f1": 0.462
+        },
+        "gate_passed": {
+          "n": 19,
+          "tp": 8,
+          "fp": 1,
+          "fn": 4,
+          "tn": 6,
+          "precision": 0.889,
+          "recall": 0.667,
+          "f1": 0.762
+        },
+        "gate_blocked": {
+          "n": 9,
+          "tp": 0,
+          "fp": 0,
+          "fn": 5,
+          "tn": 4,
+          "precision": null,
+          "recall": 0.0,
+          "f1": 0.0
+        }
+      },
+      "name_match": {
+        "regular_ok": 4,
+        "regular_total": 13,
+        "interp_ok": 0,
+        "interp_total": 2
+      },
+      "unclear_pred": {
+        "9": false,
+        "10": false,
+        "11": false,
+        "20": false
+      },
+      "self_name_pred": {
+        "13": true,
+        "14": false,
+        "15": false
+      }
+    },
+    "A_0.75": {
+      "groups": {
+        "all": {
+          "n": 28,
+          "tp": 4,
+          "fp": 0,
+          "fn": 13,
+          "tn": 11,
+          "precision": 1.0,
+          "recall": 0.235,
+          "f1": 0.381
+        },
+        "cat:full_name": {
+          "n": 6,
+          "tp": 1,
+          "fp": 0,
+          "fn": 5,
+          "tn": 0,
+          "precision": 1.0,
+          "recall": 0.167,
+          "f1": 0.286
+        },
+        "cat:no_name": {
+          "n": 2,
+          "tp": 1,
+          "fp": 0,
+          "fn": 1,
+          "tn": 0,
+          "precision": 1.0,
+          "recall": 0.5,
+          "f1": 0.667
+        },
+        "cat:name_no_marker": {
+          "n": 1,
+          "tp": 0,
+          "fp": 0,
+          "fn": 1,
+          "tn": 0,
+          "precision": null,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "cat:trap_words": {
+          "n": 4,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 4,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "cat:negation": {
+          "n": 3,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 3,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "cat:vat_service": {
+          "n": 3,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 3,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "cat:caps_typos": {
+          "n": 3,
+          "tp": 0,
+          "fp": 0,
+          "fn": 2,
+          "tn": 1,
+          "precision": null,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "cat:initials": {
+          "n": 3,
+          "tp": 1,
+          "fp": 0,
+          "fn": 2,
+          "tn": 0,
+          "precision": 1.0,
+          "recall": 0.333,
+          "f1": 0.5
+        },
+        "cat:incomplete": {
+          "n": 3,
+          "tp": 1,
+          "fp": 0,
+          "fn": 2,
+          "tn": 0,
+          "precision": 1.0,
+          "recall": 0.333,
+          "f1": 0.5
+        },
+        "near": {
+          "n": 8,
+          "tp": 3,
+          "fp": 0,
+          "fn": 5,
+          "tn": 0,
+          "precision": 1.0,
+          "recall": 0.375,
+          "f1": 0.545
+        },
+        "clean": {
+          "n": 20,
+          "tp": 1,
+          "fp": 0,
+          "fn": 8,
+          "tn": 11,
+          "precision": 1.0,
+          "recall": 0.111,
+          "f1": 0.2
+        },
+        "gate_passed": {
+          "n": 19,
+          "tp": 4,
+          "fp": 0,
+          "fn": 8,
+          "tn": 7,
+          "precision": 1.0,
+          "recall": 0.333,
+          "f1": 0.5
+        },
+        "gate_blocked": {
+          "n": 9,
+          "tp": 0,
+          "fp": 0,
+          "fn": 5,
+          "tn": 4,
+          "precision": null,
+          "recall": 0.0,
+          "f1": 0.0
+        }
+      },
+      "name_match": {
+        "regular_ok": 3,
+        "regular_total": 13,
+        "interp_ok": 0,
+        "interp_total": 2
+      },
+      "unclear_pred": {
+        "9": false,
+        "10": false,
+        "11": false,
+        "20": false
+      },
+      "self_name_pred": {
+        "13": true,
+        "14": false,
+        "15": false
+      }
+    },
+    "B_0.5": {
+      "groups": {
+        "all": {
+          "n": 28,
+          "tp": 16,
+          "fp": 1,
+          "fn": 1,
+          "tn": 10,
+          "precision": 0.941,
+          "recall": 0.941,
+          "f1": 0.941
+        },
+        "cat:full_name": {
+          "n": 6,
+          "tp": 6,
+          "fp": 0,
+          "fn": 0,
+          "tn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "cat:no_name": {
+          "n": 2,
+          "tp": 1,
+          "fp": 0,
+          "fn": 1,
+          "tn": 0,
+          "precision": 1.0,
+          "recall": 0.5,
+          "f1": 0.667
+        },
+        "cat:name_no_marker": {
+          "n": 1,
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "tn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "cat:trap_words": {
+          "n": 4,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 4,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "cat:negation": {
+          "n": 3,
+          "tp": 0,
+          "fp": 1,
+          "fn": 0,
+          "tn": 2,
+          "precision": 0.0,
+          "recall": null,
+          "f1": 0.0
+        },
+        "cat:vat_service": {
+          "n": 3,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 3,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "cat:caps_typos": {
+          "n": 3,
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "tn": 1,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "cat:initials": {
+          "n": 3,
+          "tp": 3,
+          "fp": 0,
+          "fn": 0,
+          "tn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "cat:incomplete": {
+          "n": 3,
+          "tp": 3,
+          "fp": 0,
+          "fn": 0,
+          "tn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "near": {
+          "n": 8,
+          "tp": 7,
+          "fp": 0,
+          "fn": 1,
+          "tn": 0,
+          "precision": 1.0,
+          "recall": 0.875,
+          "f1": 0.933
+        },
+        "clean": {
+          "n": 20,
+          "tp": 9,
+          "fp": 1,
+          "fn": 0,
+          "tn": 10,
+          "precision": 0.9,
+          "recall": 1.0,
+          "f1": 0.947
+        },
+        "gate_passed": {
+          "n": 19,
+          "tp": 11,
+          "fp": 1,
+          "fn": 1,
+          "tn": 6,
+          "precision": 0.917,
+          "recall": 0.917,
+          "f1": 0.917
+        },
+        "gate_blocked": {
+          "n": 9,
+          "tp": 5,
+          "fp": 0,
+          "fn": 0,
+          "tn": 4,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "name_match": {
+        "regular_ok": 9,
+        "regular_total": 13,
+        "interp_ok": 0,
+        "interp_total": 2
+      },
+      "unclear_pred": {
+        "9": false,
+        "10": false,
+        "11": false,
+        "20": false
+      },
+      "self_name_pred": {
+        "13": true,
+        "14": false,
+        "15": true
+      }
+    }
+  }
+}

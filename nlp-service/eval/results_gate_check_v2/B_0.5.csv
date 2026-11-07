@@ -1,0 +1,28 @@
+id,category,label,note,pred,how,decision,score,extracted,expected,name_ok
+1,trap_za_usluga,no,,True,rule3_prep_per,GATED,0.0,Иванов А.П.,,
+2,trap_za_tovar,no,,False,rule4_semantic,SEMANTIC,0.57,,,
+3,name_no_marker,no,,False,rule4_semantic,GATED,0.0,,,
+4,v_polzu_org,no,,True,rule4_semantic,SEMANTIC,0.767,,,
+5,v_polzu_org,no,,False,rule4_semantic,SEMANTIC,0.581,,,
+6,v_polzu_org,no,,True,rule4_semantic,SEMANTIC,0.72,,,
+7,za_month,no,,False,rule4_semantic,GATED,0.0,,,
+8,za_tovar,no,,False,rule4_semantic,GATED,0.0,,,
+9,za_month,no,,False,rule4_semantic,GATED,0.0,,,
+10,negation_far,no,«не» далеко после «третьих лиц»,True,rule2_strong,SEMANTIC,0.586,,,
+11,negation_far,no,«без» далеко до «лиц»,True,rule4_semantic,SEMANTIC,0.531,,,
+12,negation_far,no,«отсутствует» далеко до «третьих»,True,rule2_strong,SEMANTIC,0.742,,,
+13,za_usluga,no,,True,rule3_prep_per,SEMANTIC,0.681,Кузнецов А.В.,,
+14,vat,no,,False,rule4_semantic,GATED,0.0,,,
+15,v_polzu_org,no,,True,rule4_semantic,SEMANTIC,0.725,,,
+16,full_name,yes,near_template,True,rule3_prep_per,SEMANTIC,0.649,Соколов Дмитрий Андреевич,Соколов Дмитрий Андреевич,True
+17,full_name,yes,near_template,True,rule3_prep_per,SEMANTIC,0.593,Петрова Марина Сергеевна,Петрова Марина Сергеевна,True
+18,full_name,yes,near_example,True,rule3_prep_per,SEMANTIC,0.529,Николаев Артём Игоревич,Николаев Артем Игоревич,True
+19,full_name,yes,near_template,True,rule3_prep_per,SEMANTIC,0.599,Опл,Смирнова Елена Викторовна,False
+20,full_name,yes,near_template near_example,True,rule2_strong,SEMANTIC,0.457,Кузнецов Владимир Николаевич,Кузнецов Владимир Николаевич,True
+21,full_name,yes,,True,rule3_prep_per,SEMANTIC,0.543,Морозова Ольга Ивановна,Морозова Ольга Ивановна,True
+22,full_name,yes,"«без» в соседней клаузе, третье лицо есть",False,rule1_negation,NEGATED,0.0,,Лебедева Наталья Петровна,
+23,full_name,yes,,True,rule3_prep_per,SEMANTIC,0.585,Иванова Анастасия Игоревна,Иванова Анастасия Игоревна,True
+24,full_name,yes,,True,rule3_prep_per,GATED,0.0,Волков Кирилл Дмитриевич,Волков Кирилл Дмитриевич,True
+25,self_name,no,своё имя плюс маркер: должна снять сверка,True,rule3_prep_per,GATED,0.0,Петров Игорь Николаевич,,
+26,self_name,no,своё имя плюс маркер: должна снять сверка,True,rule3_prep_per,SEMANTIC,0.643,Соловьёва Екатерина Викторовна,,
+27,self_name,no,"имя плательщика, маркер относится к организации",True,rule4_semantic,SEMANTIC,0.652,Иванова Мария Петровна,,

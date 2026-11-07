@@ -1,5 +1,6 @@
 package com.bank.avpiteam.demo;
 
+import com.bank.avpiteam.service.mapping.Normalization;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
@@ -103,7 +104,7 @@ public class DemoDataGenerator implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        if (count("SELECT count(*) FROM clients") == 0) {
+        if (count("SELECT count(*) FROM contracts") == 0) {
             generateReferenceData();
         } else {
             log.info("Демо: справочник уже есть ({} договоров), пропускаем", count("SELECT count(*) FROM contracts"));
@@ -306,6 +307,7 @@ public class DemoDataGenerator implements CommandLineRunner {
         List<SampledContract> multi = new ArrayList<>();
         List<SampledContract> withBeneficiary = new ArrayList<>();
         List<SampledContract> individualCounterparty = new ArrayList<>();
+
         for (SampledContract c : sample) {
             (c.counterpartyContracts() == 1 ? single : multi).add(c);
             if (c.beneficiaryId() != null && c.beneficiaryId() != c.counterpartyId()) {
@@ -337,6 +339,30 @@ public class DemoDataGenerator implements CommandLineRunner {
                 };
                 rows.add(row);
                 created.merge(scenario, 1, Integer::sum);
+            }
+        }
+
+        Random chaosRnd = new Random(properties.getSeed() + 1);
+        List<SampledContract> partialPool = withBeneficiary.stream()
+                .filter(c -> c.counterpartyContracts() > 1).toList();
+        List<SampledContract> beneficiaryPool = partialPool.isEmpty() ? withBeneficiary : partialPool;
+        List<SampledContract> singleBeneficiaryPool = withBeneficiary.stream()
+                .filter(c -> c.counterpartyContracts() == 1).toList();
+        for (ChaosScenario s : ChaosScenario.values()) {
+            int quota = (int) Math.round(total * chaosPercent(s) / 100.0);
+            if (s == ChaosScenario.PARTIAL_NAME_SINGLE_CONTRACT && singleBeneficiaryPool.isEmpty()) quota = 0;
+            for (int i = 0; i < quota; i++) {
+                rows.add(switch (s) {
+                    case PARTIAL_NAME_ONLY -> chaosPartialName(s,
+                            pickWithIndividualBeneficiary(beneficiaryPool, clients, chaosRnd), clients, chaosRnd, rows.size());
+                    case NOISY_NUMBER_WITH_PARTY -> chaosNoisyNumber(s, pick(multi, all, chaosRnd),
+                            clients, chaosRnd, rows.size());
+                    case PARTIAL_NAME_SINGLE_CONTRACT -> chaosPartialName(s,
+                            pickWithIndividualBeneficiary(singleBeneficiaryPool, clients, chaosRnd),
+                            clients, chaosRnd, rows.size());
+                    case NOISY_NUMBER_SINGLE_CONTRACT -> chaosNoisyNumber(s, pick(single, all, chaosRnd),
+                            clients, chaosRnd, rows.size());
+                });
             }
         }
 
@@ -504,22 +530,20 @@ public class DemoDataGenerator implements CommandLineRunner {
                                          String purpose, Random rnd, int seq) {
         String reference = "DEMO-%s-%s-%d-%06d".formatted(scenario.name(), scenario.expected.name(),
                 scenario.expected.name().equals("AUTO_MAPPED") ? expectedContract : 0, seq);
+        return buildOperation(reference, sender, receiver, purpose, rnd);
+    }
+
+    private SqlParameterSource buildOperation(String reference, Side sender, Side receiver, String purpose, Random rnd) {
         BigDecimal amount = BigDecimal.valueOf(100 + rnd.nextInt(500_000));
         return new MapSqlParameterSource()
                 .addValue("reference", reference)
                 .addValue("operationDate", LocalDateTime.now().minusDays(rnd.nextInt(30)).minusMinutes(rnd.nextInt(1440)))
-                .addValue("senderPin", pin(rnd))
-                .addValue("senderBranch", String.format("%04d", rnd.nextInt(10_000)))
-                .addValue("senderInn", sender.inn())
-                .addValue("senderAccount", sender.account())
+                .addValue("senderPin", pin(rnd)).addValue("senderBranch", String.format("%04d", rnd.nextInt(10_000)))
+                .addValue("senderInn", sender.inn()).addValue("senderAccount", sender.account())
                 .addValue("senderName", sender.name())
-                .addValue("receiverPin", pin(rnd))
-                .addValue("receiverBranch", String.format("%04d", rnd.nextInt(10_000)))
-                .addValue("receiverInn", receiver.inn())
-                .addValue("receiverAccount", receiver.account())
-                .addValue("receiverName", receiver.name())
-                .addValue("amount", amount)
-                .addValue("purpose", purpose);
+                .addValue("receiverPin", pin(rnd)).addValue("receiverBranch", String.format("%04d", rnd.nextInt(10_000)))
+                .addValue("receiverInn", receiver.inn()).addValue("receiverAccount", receiver.account())
+                .addValue("receiverName", receiver.name()).addValue("amount", amount).addValue("purpose", purpose);
     }
 
     // --- вспомогательные ---
@@ -601,5 +625,44 @@ public class DemoDataGenerator implements CommandLineRunner {
 
     private static long seconds(long startedMillis) {
         return (System.currentTimeMillis() - startedMillis) / 1000;
+    }
+
+    private SampledContract pickWithIndividualBeneficiary(List<SampledContract> pool, Map<Long, ClientInfo> clients,
+                                                          Random rnd) {
+        for (int i = 0; i < 100; i++) {
+            SampledContract c = pool.get(rnd.nextInt(pool.size()));
+            if (c.beneficiaryId() != null) {
+                ClientInfo b = clients.get(c.beneficiaryId());
+                if (b != null && b.individual()) return c;
+            }
+        }
+        throw new IllegalStateException("no contract with individual beneficiary for chaos scenario");
+    }
+
+    private SqlParameterSource chaosPartialName(ChaosScenario s, SampledContract c, Map<Long, ClientInfo> clients,
+                                                Random rnd, int seq) {
+        ClientInfo b = clients.get(c.beneficiaryId());
+        String purpose = ChaosText.partialNamePurpose(b.lastName(), b.firstName(), b.middleName(), b.female(), rnd);
+        return buildOperation(s.reference(c.id(), seq), externalSide(rnd),
+                side(clients.get(c.counterpartyId()), rnd), purpose, rnd);
+    }
+
+    private SqlParameterSource chaosNoisyNumber(ChaosScenario s, SampledContract c, Map<Long, ClientInfo> clients,
+                                                Random rnd, int seq) {
+        String purpose = ChaosText.noisyNumberPurpose(c.number(), rnd, Normalization::contractNumber);
+        Side known = side(clients.get(c.counterpartyId()), rnd);
+        Side external = externalSide(rnd);
+        boolean partyIsSender = rnd.nextBoolean();
+        return buildOperation(s.reference(c.id(), seq), partyIsSender ? known : external,
+                partyIsSender ? external : known, purpose, rnd);
+    }
+
+    private double chaosPercent(ChaosScenario s) {
+        return switch (s) {
+            case PARTIAL_NAME_ONLY -> properties.getChaos().getPartialNameOnlyPercent();
+            case NOISY_NUMBER_WITH_PARTY -> properties.getChaos().getNoisyNumberWithPartyPercent();
+            case PARTIAL_NAME_SINGLE_CONTRACT -> properties.getChaos().getPartialNameSingleContractPercent();
+            case NOISY_NUMBER_SINGLE_CONTRACT -> properties.getChaos().getNoisyNumberSingleContractPercent();
+        };
     }
 }

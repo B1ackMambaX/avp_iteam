@@ -1,5 +1,8 @@
 package com.bank.avpiteam.demo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Родительный падеж ФИО для демо-назначений вида "в пользу Иванова Ивана Ивановича".
  * Упрощённые правила - достаточно для имён из справочника генератора.
@@ -60,5 +63,20 @@ final class RussianNames {
         return value.endsWith(suffix)
                 ? value.substring(0, value.length() - suffix.length()) + replacement
                 : value;
+    }
+    /** Родительный падеж только выбранных частей ФИО. Пустые и null-части пропускаются. */
+    static String genitivePart(String lastName, String firstName, String middleName, boolean female,
+                               boolean useLast, boolean useFirst, boolean useMiddle) {
+        List<String> parts = new ArrayList<>();
+        if (useLast && lastName != null && !lastName.isBlank()) {
+            parts.add(female ? femaleLastName(lastName) : lastName + "а");
+        }
+        if (useFirst && firstName != null && !firstName.isBlank()) {
+            parts.add(female ? femaleFirstName(firstName) : maleFirstName(firstName));
+        }
+        if (useMiddle && middleName != null && !middleName.isBlank()) {
+            parts.add(female ? replaceEnd(middleName, "на", "ны") : middleName + "а");
+        }
+        return String.join(" ", parts);
     }
 }

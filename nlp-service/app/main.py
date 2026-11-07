@@ -11,6 +11,10 @@ from app.parser import parse_payment_purpose, extract_beneficiary_name
 from app.semantic_classifier import classify_by_similarity
 from prometheus_fastapi_instrumentator import Instrumentator
 from app.metrics import CLASSIFY_TOTAL, EXTRACT_NAME_TOTAL
+from app.gate_patterns import get_gate_patterns
+from pydantic import BaseModel, Field
+from fastapi import FastAPI, HTTPException
+from app.semantic_classifier import POSITIVE_EXAMPLES, NEGATIVE_EXAMPLES
 
 app = FastAPI(title="AVP iTeam NLP Service")
 
@@ -30,6 +34,8 @@ class ParseResponse(BaseModel):
 class TextRequest(BaseModel):
     text: str
     threshold: float = 0.5
+    triggerWords: list[str] | None = Field(default=None, min_length=1, max_length=100)
+    negationWords: list[str] | None = Field(default=None, min_length=1, max_length=100)
 
 class ClassifyResponse(BaseModel):
     isThirdParty: bool
@@ -45,7 +51,17 @@ def health():
 
 @app.post("/classify", response_model=ClassifyResponse)
 def classify(request: TextRequest):
-    result = classify_by_similarity(request.text, threshold=request.threshold)
+    try:
+        trigger_re, negation_re = get_gate_patterns(request.triggerWords, request.negationWords)
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail=str(e))
+
+    result = classify_by_similarity(
+        request.text,
+        threshold=request.threshold,
+        trigger_re=trigger_re,
+        negation_re=negation_re
+    )
 
     CLASSIFY_TOTAL.labels(
         decision=result["decision"],
@@ -70,3 +86,6 @@ def extract_name(request: TextRequest):
 def parse(request: TextRequest):
     return parse_payment_purpose(request.text)
 
+@app.get("/examples")
+def examples():
+    return {"positive": list(POSITIVE_EXAMPLES), "negative": list(NEGATIVE_EXAMPLES)}

@@ -34,7 +34,7 @@ nlp:
   service:
     base-url: ${NLP_SERVICE_URL:http://localhost:8001}
   semantic:
-    threshold: 0.75
+    threshold: ${NLP_SEMANTIC_THRESHOLD:0.5}
 
 # Конвейер: PENDING -> разбор назначения -> PARSED -> маппинг. Подробно - docs/mapping.md
 pipeline:
@@ -72,3 +72,9 @@ management:
     distribution:
       percentiles-histogram:
         avpiteam.nlp.detect: true
+
+security:
+  bootstrap:
+    admin-password: ${AVP_ADMIN_PASSWORD:}
+    editor-password: ${AVP_EDITOR_PASSWORD:}
+    reader-password: ${AVP_READER_PASSWORD:}

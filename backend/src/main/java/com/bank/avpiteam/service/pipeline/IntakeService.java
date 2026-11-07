@@ -30,7 +30,7 @@ public class IntakeService {
     private final PipelineProperties properties;
     private final PaymentPurposeParser markerParser;
     private final ParseResultWriter parseResultWriter;
-
+    private final StageTimers stages;
     /** @return сколько операций принято */
     @Transactional
     public int intakeBatch() {
@@ -40,27 +40,26 @@ public class IntakeService {
     }
 
     private int enqueueForNlp() {
-        // Повторная постановка (операцию вернули в PENDING) переиспользует строку задачи
-        int queued = jdbc.update("""
-                WITH picked AS (
-                    SELECT id FROM operations
-                    WHERE status = 'PENDING'
-                    ORDER BY id
-                    LIMIT :limit
-                    FOR UPDATE SKIP LOCKED
-                ), queued AS (
-                    INSERT INTO nlp_task (operation_id)
-                    SELECT id FROM picked
-                    ON CONFLICT (operation_id) DO UPDATE
-                        SET status = 'NEW', attempts = 0, next_try_at = now(),
-                            locked_until = NULL, last_error = NULL, updated_at = now()
-                )
-                UPDATE operations o
-                SET status = 'WAITING_NLP', updated_at = now()
-                FROM picked p
-                WHERE o.id = p.id
-                """,
-                Map.of("limit", properties.getIntakeBatchSize()));
+        int queued = stages.time("enqueue", () -> jdbc.update("""
+            WITH picked AS (
+                SELECT id FROM operations
+                WHERE status = 'PENDING'
+                ORDER BY id
+                LIMIT :limit
+                FOR UPDATE SKIP LOCKED
+            ), queued AS (
+                INSERT INTO nlp_task (operation_id)
+                SELECT id FROM picked
+                ON CONFLICT (operation_id) DO UPDATE
+                    SET status = 'NEW', attempts = 0, next_try_at = now(),
+                        locked_until = NULL, last_error = NULL, updated_at = now()
+            )
+            UPDATE operations o
+            SET status = 'WAITING_NLP', updated_at = now()
+            FROM picked p
+            WHERE o.id = p.id
+            """,
+                Map.of("limit", properties.getIntakeBatchSize())));
         if (queued > 0) {
             log.debug("В очередь NLP поставлено {} операций", queued);
         }
