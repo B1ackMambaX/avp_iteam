@@ -1,0 +1,3 @@
+benchmark:
+  dataset-path: C:/Users/darkh/IdeaProjects/avp_iteam/data/test-dataset.csv
+  performance-iterations: 5000000

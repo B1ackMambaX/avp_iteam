@@ -1,0 +1,36 @@
+id,category,label,note,pred,how,decision,score,extracted,expected,name_ok
+1,full_name,yes,маркер за счёт,True,rule3_prep_per,GATED,0.0,Тихонова Анна Сергеевна,Тихонова Анна Сергеевна,True
+2,full_name,yes,,True,rule3_prep_per,SEMANTIC,0.756,Миронов Павел Игоревич,Миронов Павел Игоревич,True
+3,full_name,yes,маркер в интересах,True,rule3_prep_per,SEMANTIC,0.563,Опл,Крылов Дмитрий Анатольевич,False
+4,full_name,yes,near_example,True,rule3_prep_per,SEMANTIC,0.478,Гордеева Ольга Васильевна,Гордеева Ольга Васильевна,True
+5,full_name,yes,,True,rule3_prep_per,GATED,0.0,Журавлёв Артём Дмитриевич,Журавлев Артем Дмитриевич,True
+6,full_name,yes,near_template,True,rule3_prep_per,SEMANTIC,0.511,Ефимова Мария Ивановна,Ефимова Мария Ивановна,True
+7,no_name,yes,near_template near_example,True,rule2_strong,SEMANTIC,0.873,,,
+8,no_name,yes,near_template,False,rule1_negation,NEGATED,0.0,,,
+9,no_name,unclear,ловушка: конкретное лицо не названо,False,rule4_semantic,SEMANTIC,0.698,,,
+10,name_no_marker,unclear,по смыслу третье лицо но маркера нет,False,rule4_semantic,GATED,0.0,,,
+11,name_no_marker,unclear,,False,rule4_semantic,GATED,0.0,,,
+12,name_no_marker,yes,есть предлог за,True,rule3_prep_per,SEMANTIC,0.545,Лукьянов Сергей Николаевич,Лукьянов Сергей Николаевич,True
+13,self_name,no,своё имя плюс маркер: должна снять сверка,True,rule3_prep_per,SEMANTIC,0.788,Игнатьева Наталья Викторовна,,
+14,self_name,no,,False,rule4_semantic,GATED,0.0,,,
+15,self_name,no,своё имя плюс маркер: должна снять сверка,True,rule3_prep_per,GATED,0.0,Никонов Владимир Ильич,,
+16,trap_words,no,ловушка с триггером счет,False,rule4_semantic,SEMANTIC,0.622,,,
+17,trap_words,no,ловушка с триггером польз,False,rule4_semantic,SEMANTIC,0.632,,,
+18,trap_words,no,ловушка с триггером счет,False,rule4_semantic,SEMANTIC,0.659,,,
+19,trap_words,no,без триггера,False,rule4_semantic,GATED,0.0,,,
+20,trap_words,unclear,триггер лиц; конкретное лицо не названо,False,rule4_semantic,SEMANTIC,0.651,,,
+21,negation,no,,False,rule1_negation,NEGATED,0.0,,,
+22,negation,no,,False,rule1_negation,NEGATED,0.0,,,
+23,negation,no,,True,rule2_strong,SEMANTIC,0.646,,,
+24,vat_service,no,,False,rule1_negation,NEGATED,0.0,,,
+25,vat_service,no,,False,rule4_semantic,GATED,0.0,,,
+26,vat_service,no,,False,rule4_semantic,GATED,0.0,,,
+27,caps_typos,yes,near_template,True,rule2_strong,SEMANTIC,0.74,,Трофимова Ирина Алексеевна,False
+28,caps_typos,yes,near_template; опечатки,True,rule3_prep_per,SEMANTIC,0.382,Превод,Савельев Олег Геннадьевич,False
+29,caps_typos,no,без триггера,False,rule4_semantic,GATED,0.0,,,
+30,initials,yes,,True,rule3_prep_per,GATED,0.0,Зотов Т.М.,Зотова Т.М.,False
+31,initials,yes,near_template,True,rule3_prep_per,SEMANTIC,0.777,Мельников А.С.,Мельников А.С.,True
+32,initials,yes,маркер за,True,rule3_prep_per,GATED,0.0,Родионова Е.Ю.,Родионова Е.Ю.,True
+33,incomplete,yes,near_template,True,rule3_prep_per,SEMANTIC,0.804,Анна Викторовна,Анна Викторовна,True
+34,incomplete,yes,интерпретация: отчество плюс имя,True,rule3_prep_per,SEMANTIC,0.652,Петрович Семен,Семен Петрович,False
+35,incomplete,yes,интерпретация: отчество плюс имя,True,rule3_prep_per,GATED,0.0,Степанович Андрей,Андрей Степанович,False

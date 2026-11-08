@@ -1,0 +1,15 @@
+# Демо маппинга на объёме: см. docs/mapping.md, раздел "Как записать демо"
+demo:
+  clients: 300000
+  contracts: 1000000
+  operations: 10000
+  seed: 42
+  chaos:
+    partial-name-only-percent: 5
+    noisy-number-with-party-percent: 5
+    partial-name-single-contract-percent: 5
+    noisy-number-single-contract-percent: 5
+
+logging:
+  level:
+    com.bank.avpiteam: INFO

@@ -1,0 +1,505 @@
+{
+  "eval_set_commit": "87c9722",
+  "script_head": "4b3ad56",
+  "service_rev": "dd0edb4",
+  "variants": {
+    "A_0.5": {
+      "groups": {
+        "all": {
+          "n": 24,
+          "tp": 4,
+          "fp": 5,
+          "fn": 5,
+          "tn": 10,
+          "precision": 0.444,
+          "recall": 0.444,
+          "f1": 0.444
+        },
+        "cat:trap_za_usluga": {
+          "n": 1,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 1,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "cat:trap_za_tovar": {
+          "n": 1,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 1,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "cat:name_no_marker": {
+          "n": 1,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 1,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "cat:v_polzu_org": {
+          "n": 4,
+          "tp": 0,
+          "fp": 3,
+          "fn": 0,
+          "tn": 1,
+          "precision": 0.0,
+          "recall": null,
+          "f1": 0.0
+        },
+        "cat:za_month": {
+          "n": 2,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 2,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "cat:za_tovar": {
+          "n": 1,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 1,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "cat:negation_far": {
+          "n": 3,
+          "tp": 0,
+          "fp": 2,
+          "fn": 0,
+          "tn": 1,
+          "precision": 0.0,
+          "recall": null,
+          "f1": 0.0
+        },
+        "cat:za_usluga": {
+          "n": 1,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 1,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "cat:vat": {
+          "n": 1,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 1,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "cat:full_name": {
+          "n": 9,
+          "tp": 4,
+          "fp": 0,
+          "fn": 5,
+          "tn": 0,
+          "precision": 1.0,
+          "recall": 0.444,
+          "f1": 0.615
+        },
+        "near": {
+          "n": 5,
+          "tp": 3,
+          "fp": 0,
+          "fn": 2,
+          "tn": 0,
+          "precision": 1.0,
+          "recall": 0.6,
+          "f1": 0.75
+        },
+        "clean": {
+          "n": 19,
+          "tp": 1,
+          "fp": 5,
+          "fn": 3,
+          "tn": 10,
+          "precision": 0.167,
+          "recall": 0.25,
+          "f1": 0.2
+        },
+        "gate_passed": {
+          "n": 17,
+          "tp": 4,
+          "fp": 5,
+          "fn": 4,
+          "tn": 4,
+          "precision": 0.444,
+          "recall": 0.5,
+          "f1": 0.471
+        },
+        "gate_blocked": {
+          "n": 7,
+          "tp": 0,
+          "fp": 0,
+          "fn": 1,
+          "tn": 6,
+          "precision": null,
+          "recall": 0.0,
+          "f1": 0.0
+        }
+      },
+      "name_match": {
+        "regular_ok": 3,
+        "regular_total": 9,
+        "interp_ok": 0,
+        "interp_total": 0
+      },
+      "unclear_pred": {},
+      "self_name_pred": {
+        "25": false,
+        "26": true,
+        "27": true
+      }
+    },
+    "A_0.75": {
+      "groups": {
+        "all": {
+          "n": 24,
+          "tp": 0,
+          "fp": 1,
+          "fn": 9,
+          "tn": 14,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "cat:trap_za_usluga": {
+          "n": 1,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 1,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "cat:trap_za_tovar": {
+          "n": 1,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 1,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "cat:name_no_marker": {
+          "n": 1,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 1,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "cat:v_polzu_org": {
+          "n": 4,
+          "tp": 0,
+          "fp": 1,
+          "fn": 0,
+          "tn": 3,
+          "precision": 0.0,
+          "recall": null,
+          "f1": 0.0
+        },
+        "cat:za_month": {
+          "n": 2,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 2,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "cat:za_tovar": {
+          "n": 1,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 1,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "cat:negation_far": {
+          "n": 3,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 3,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "cat:za_usluga": {
+          "n": 1,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 1,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "cat:vat": {
+          "n": 1,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 1,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "cat:full_name": {
+          "n": 9,
+          "tp": 0,
+          "fp": 0,
+          "fn": 9,
+          "tn": 0,
+          "precision": null,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "near": {
+          "n": 5,
+          "tp": 0,
+          "fp": 0,
+          "fn": 5,
+          "tn": 0,
+          "precision": null,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "clean": {
+          "n": 19,
+          "tp": 0,
+          "fp": 1,
+          "fn": 4,
+          "tn": 14,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "gate_passed": {
+          "n": 17,
+          "tp": 0,
+          "fp": 1,
+          "fn": 8,
+          "tn": 8,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "gate_blocked": {
+          "n": 7,
+          "tp": 0,
+          "fp": 0,
+          "fn": 1,
+          "tn": 6,
+          "precision": null,
+          "recall": 0.0,
+          "f1": 0.0
+        }
+      },
+      "name_match": {
+        "regular_ok": 0,
+        "regular_total": 9,
+        "interp_ok": 0,
+        "interp_total": 0
+      },
+      "unclear_pred": {},
+      "self_name_pred": {
+        "25": false,
+        "26": false,
+        "27": false
+      }
+    },
+    "B_0.5": {
+      "groups": {
+        "all": {
+          "n": 24,
+          "tp": 8,
+          "fp": 8,
+          "fn": 1,
+          "tn": 7,
+          "precision": 0.5,
+          "recall": 0.889,
+          "f1": 0.64
+        },
+        "cat:trap_za_usluga": {
+          "n": 1,
+          "tp": 0,
+          "fp": 1,
+          "fn": 0,
+          "tn": 0,
+          "precision": 0.0,
+          "recall": null,
+          "f1": 0.0
+        },
+        "cat:trap_za_tovar": {
+          "n": 1,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 1,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "cat:name_no_marker": {
+          "n": 1,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 1,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "cat:v_polzu_org": {
+          "n": 4,
+          "tp": 0,
+          "fp": 3,
+          "fn": 0,
+          "tn": 1,
+          "precision": 0.0,
+          "recall": null,
+          "f1": 0.0
+        },
+        "cat:za_month": {
+          "n": 2,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 2,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "cat:za_tovar": {
+          "n": 1,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 1,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "cat:negation_far": {
+          "n": 3,
+          "tp": 0,
+          "fp": 3,
+          "fn": 0,
+          "tn": 0,
+          "precision": 0.0,
+          "recall": null,
+          "f1": 0.0
+        },
+        "cat:za_usluga": {
+          "n": 1,
+          "tp": 0,
+          "fp": 1,
+          "fn": 0,
+          "tn": 0,
+          "precision": 0.0,
+          "recall": null,
+          "f1": 0.0
+        },
+        "cat:vat": {
+          "n": 1,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 1,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "cat:full_name": {
+          "n": 9,
+          "tp": 8,
+          "fp": 0,
+          "fn": 1,
+          "tn": 0,
+          "precision": 1.0,
+          "recall": 0.889,
+          "f1": 0.941
+        },
+        "near": {
+          "n": 5,
+          "tp": 5,
+          "fp": 0,
+          "fn": 0,
+          "tn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "clean": {
+          "n": 19,
+          "tp": 3,
+          "fp": 8,
+          "fn": 1,
+          "tn": 7,
+          "precision": 0.273,
+          "recall": 0.75,
+          "f1": 0.4
+        },
+        "gate_passed": {
+          "n": 17,
+          "tp": 7,
+          "fp": 7,
+          "fn": 1,
+          "tn": 2,
+          "precision": 0.5,
+          "recall": 0.875,
+          "f1": 0.636
+        },
+        "gate_blocked": {
+          "n": 7,
+          "tp": 1,
+          "fp": 1,
+          "fn": 0,
+          "tn": 5,
+          "precision": 0.5,
+          "recall": 1.0,
+          "f1": 0.667
+        }
+      },
+      "name_match": {
+        "regular_ok": 7,
+        "regular_total": 9,
+        "interp_ok": 0,
+        "interp_total": 0
+      },
+      "unclear_pred": {},
+      "self_name_pred": {
+        "25": true,
+        "26": true,
+        "27": true
+      }
+    }
+  }
+}

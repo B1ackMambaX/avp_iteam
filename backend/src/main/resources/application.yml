@@ -1,0 +1,80 @@
+spring:
+  application:
+    name: avp-iteam
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/avp_iteam?useUnicode=true&characterEncoding=UTF-8}
+    username: ${DB_USER:avp_iteam_user}
+    password: ${DB_PASSWORD:avp_iteam_pass}
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          batch_size: 100
+        order_inserts: true
+        order_updates: true
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+vaadin:
+  launch-browser: true
+
+nlp:
+  service:
+    base-url: ${NLP_SERVICE_URL:http://localhost:8001}
+  semantic:
+    threshold: ${NLP_SEMANTIC_THRESHOLD:0.5}
+
+# Конвейер: PENDING -> разбор назначения -> PARSED -> маппинг. Подробно - docs/mapping.md
+pipeline:
+  # nlp - через очередь nlp_task и Python-сервис; marker - regex-парсер без Python
+  parser: ${PIPELINE_PARSER:nlp}
+  scheduler:
+    enabled: ${PIPELINE_SCHEDULER:false}
+
+mapping:
+  batch-size: 500
+  auto-threshold: 0.6
+  min-gap: 0.2
+  weights:
+    party: 0.4
+    both-sides: 0.2
+    contract-number: 0.4
+    beneficiary-name: 0.3
+
+server:
+  port: 8080
+
+logging:
+  level:
+    com.bank.avpiteam: DEBUG
+    org.springframework.web: INFO
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  metrics:
+    tags:
+      application: avp_iteam
+    distribution:
+      percentiles-histogram:
+        avpiteam.nlp.detect: true
+
+security:
+  bootstrap:
+    admin-password: ${AVP_ADMIN_PASSWORD:}
+    editor-password: ${AVP_EDITOR_PASSWORD:}
+    reader-password: ${AVP_READER_PASSWORD:}

@@ -1,0 +1,82 @@
+package com.bank.avpiteam.demo;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Родительный падеж ФИО для демо-назначений вида "в пользу Иванова Ивана Ивановича".
+ * Упрощённые правила - достаточно для имён из справочника генератора.
+ */
+final class RussianNames {
+
+    private RussianNames() {
+    }
+
+    static String genitive(String lastName, String firstName, String middleName, boolean female) {
+        // Защита от null, чтобы не падало на юрлицах
+        if (lastName == null) lastName = "";
+        if (firstName == null) firstName = "";
+        if (middleName == null) middleName = "";
+
+        return String.join(" ",
+                female ? femaleLastName(lastName) : lastName + "а",
+                female ? femaleFirstName(firstName) : maleFirstName(firstName),
+                female ? replaceEnd(middleName, "на", "ны") : middleName + "а");
+    }
+
+    // Иванова -> Ивановой, Ильина -> Ильиной
+    private static String femaleLastName(String name) {
+        if (name == null || name.isEmpty()) return "";
+        return replaceEnd(name, "а", "ой");
+    }
+
+    // Иван -> Ивана, Сергей -> Сергея, Игорь -> Игоря, Илья -> Ильи
+    private static String maleFirstName(String name) {
+        if (name == null || name.isEmpty()) return "";
+        if (name.endsWith("й") || name.endsWith("ь"))  {
+            return name.substring(0, name.length() - 1) + "я";
+        }
+        if (name.endsWith("я")) {
+            return name.substring(0, name.length() - 1) + "и";
+        }
+        return name + "а";
+    }
+
+    // Мария -> Марии, Дарья -> Дарьи, Ольга -> Ольги, Анна -> Анны, Любовь -> Любови
+    private static String femaleFirstName(String name) {
+        if (name == null || name.isEmpty()) return "";
+        if (name.endsWith("ия")) {
+            return replaceEnd(name, "ия", "ии");
+        }
+        if (name.endsWith("я") || name.endsWith("ь")) {
+            return name.substring(0, name.length() - 1) + "и";
+        }
+        if (name.endsWith("а")) {
+            char before = name.charAt(name.length() - 2);
+            return name.substring(0, name.length() - 1) + ("гкхжшщч".indexOf(before) >= 0 ? "и" : "ы");
+        }
+        return name;
+    }
+
+    private static String replaceEnd(String value, String suffix, String replacement) {
+        if (value == null) return "";
+        return value.endsWith(suffix)
+                ? value.substring(0, value.length() - suffix.length()) + replacement
+                : value;
+    }
+    /** Родительный падеж только выбранных частей ФИО. Пустые и null-части пропускаются. */
+    static String genitivePart(String lastName, String firstName, String middleName, boolean female,
+                               boolean useLast, boolean useFirst, boolean useMiddle) {
+        List<String> parts = new ArrayList<>();
+        if (useLast && lastName != null && !lastName.isBlank()) {
+            parts.add(female ? femaleLastName(lastName) : lastName + "а");
+        }
+        if (useFirst && firstName != null && !firstName.isBlank()) {
+            parts.add(female ? femaleFirstName(firstName) : maleFirstName(firstName));
+        }
+        if (useMiddle && middleName != null && !middleName.isBlank()) {
+            parts.add(female ? replaceEnd(middleName, "на", "ны") : middleName + "а");
+        }
+        return String.join(" ", parts);
+    }
+}

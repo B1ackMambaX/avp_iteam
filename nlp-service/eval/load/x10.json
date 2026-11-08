@@ -1,0 +1,202 @@
+{
+  "summary": {
+    "label": "x10",
+    "total_ops": 120000,
+    "reset_s": 3.1,
+    "run_s": 806.1,
+    "ops_per_s": 148.9,
+    "contracts": 1000000,
+    "hikari_pending_max": 0.0,
+    "hikari_active_max": 1.0,
+    "heap_mb_max": 637.571044921875,
+    "cpu_max": 0.15426814455494856,
+    "classify_avg_ms": 6.578009507525789
+  },
+  "run": {
+    "parser": "NLP",
+    "millis": 805856,
+    "intake": 120000,
+    "nlpDone": 120000,
+    "nlpRetried": 0,
+    "nlpFailed": 0,
+    "mapped": 120000,
+    "mappingMillis": 82923,
+    "mappedPerSecond": 1447.1,
+    "mappedByStatus": {
+      "AUTO_MAPPED": 77046,
+      "AMBIGUOUS": 25026,
+      "MANUAL_REQUIRED": 2928,
+      "NOT_FOUND": 15000
+    },
+    "timedOut": false,
+    "stats": {
+      "operationsByStatus": {
+        "AMBIGUOUS": 25026,
+        "AUTO_MAPPED": 77046,
+        "MANUAL_REQUIRED": 2928,
+        "NOT_FOUND": 15000
+      },
+      "operationsByReason": {
+        "CLOSE_CANDIDATES": 25026,
+        "CONFIDENT_MATCH": 54604,
+        "NO_CANDIDATES": 15000,
+        "SINGLE_CANDIDATE": 22442,
+        "THIRD_PARTY_UNCONFIRMED": 2928
+      },
+      "nlpTasksByStatus": {
+        "DONE": 120000
+      },
+      "contracts": 1000000,
+      "clients": 300000
+    }
+  },
+  "report": {
+    "total": 100000,
+    "correct": 94972,
+    "accuracy": 95.0,
+    "wrongAutoMapped": 0,
+    "notProcessedYet": 0,
+    "byScenario": {
+      "NUMBER_AND_PARTY": {
+        "total": 35000,
+        "correct": 35000,
+        "accuracy": 100.0,
+        "wrongAutoMapped": 0,
+        "actualStatuses": {
+          "AUTO_MAPPED": 35000
+        }
+      },
+      "SINGLE_CONTRACT": {
+        "total": 15000,
+        "correct": 15000,
+        "accuracy": 100.0,
+        "wrongAutoMapped": 0,
+        "actualStatuses": {
+          "AUTO_MAPPED": 15000
+        }
+      },
+      "AMBIGUOUS": {
+        "total": 10000,
+        "correct": 10000,
+        "accuracy": 100.0,
+        "wrongAutoMapped": 0,
+        "actualStatuses": {
+          "AMBIGUOUS": 10000
+        }
+      },
+      "THIRD_PARTY_NUMBER": {
+        "total": 10000,
+        "correct": 9999,
+        "accuracy": 100.0,
+        "wrongAutoMapped": 0,
+        "actualStatuses": {
+          "AUTO_MAPPED": 9999,
+          "MANUAL_REQUIRED": 1
+        }
+      },
+      "THIRD_PARTY_NAME": {
+        "total": 10000,
+        "correct": 4973,
+        "accuracy": 49.7,
+        "wrongAutoMapped": 0,
+        "actualStatuses": {
+          "AMBIGUOUS": 5026,
+          "AUTO_MAPPED": 4973,
+          "MANUAL_REQUIRED": 1
+        }
+      },
+      "FALSE_THIRD_PARTY": {
+        "total": 5000,
+        "correct": 5000,
+        "accuracy": 100.0,
+        "wrongAutoMapped": 0,
+        "actualStatuses": {
+          "AUTO_MAPPED": 5000
+        }
+      },
+      "NOT_FOUND": {
+        "total": 15000,
+        "correct": 15000,
+        "accuracy": 100.0,
+        "wrongAutoMapped": 0,
+        "actualStatuses": {
+          "NOT_FOUND": 15000
+        }
+      }
+    },
+    "chaos": {
+      "total": 20000,
+      "correct": 20000,
+      "accuracy": 100.0,
+      "wrongAutoMapped": 0,
+      "notProcessedYet": 0,
+      "byScenario": {
+        "PARTIAL_NAME_ONLY": {
+          "total": 5000,
+          "correct": 5000,
+          "accuracy": 100.0,
+          "wrongAutoMapped": 0,
+          "actualStatuses": {
+            "AMBIGUOUS": 5000
+          },
+          "ambiguous": 5000,
+          "expectedInCandidates": 4966,
+          "avgCandidates": 6.4,
+          "missingExamples": [
+            "CHAOS-PARTIAL_NAME_ONLY-AMBIGUOUS+MANUAL_REQUIRED+NOT_FOUND-689297701-100027",
+            "CHAOS-PARTIAL_NAME_ONLY-AMBIGUOUS+MANUAL_REQUIRED+NOT_FOUND-688619101-100032",
+            "CHAOS-PARTIAL_NAME_ONLY-AMBIGUOUS+MANUAL_REQUIRED+NOT_FOUND-679171801-100206",
+            "CHAOS-PARTIAL_NAME_ONLY-AMBIGUOUS+MANUAL_REQUIRED+NOT_FOUND-676617601-100333",
+            "CHAOS-PARTIAL_NAME_ONLY-AMBIGUOUS+MANUAL_REQUIRED+NOT_FOUND-689038401-100357"
+          ]
+        },
+        "NOISY_NUMBER_WITH_PARTY": {
+          "total": 5000,
+          "correct": 5000,
+          "accuracy": 100.0,
+          "wrongAutoMapped": 0,
+          "actualStatuses": {
+            "AMBIGUOUS": 5000
+          },
+          "ambiguous": 5000,
+          "expectedInCandidates": 4969,
+          "avgCandidates": 6.3,
+          "missingExamples": [
+            "CHAOS-NOISY_NUMBER_WITH_PARTY-AUTO_MAPPED+AMBIGUOUS-689075801-105013",
+            "CHAOS-NOISY_NUMBER_WITH_PARTY-AUTO_MAPPED+AMBIGUOUS-686912801-105050",
+            "CHAOS-NOISY_NUMBER_WITH_PARTY-AUTO_MAPPED+AMBIGUOUS-686537601-105205",
+            "CHAOS-NOISY_NUMBER_WITH_PARTY-AUTO_MAPPED+AMBIGUOUS-677043201-105283",
+            "CHAOS-NOISY_NUMBER_WITH_PARTY-AUTO_MAPPED+AMBIGUOUS-690216701-105382"
+          ]
+        },
+        "PARTIAL_NAME_SINGLE_CONTRACT": {
+          "total": 5000,
+          "correct": 5000,
+          "accuracy": 100.0,
+          "wrongAutoMapped": 0,
+          "actualStatuses": {
+            "AUTO_MAPPED": 2074,
+            "MANUAL_REQUIRED": 2926
+          },
+          "ambiguous": 0,
+          "expectedInCandidates": 0,
+          "avgCandidates": 0.0,
+          "missingExamples": []
+        },
+        "NOISY_NUMBER_SINGLE_CONTRACT": {
+          "total": 5000,
+          "correct": 5000,
+          "accuracy": 100.0,
+          "wrongAutoMapped": 0,
+          "actualStatuses": {
+            "AUTO_MAPPED": 5000
+          },
+          "ambiguous": 0,
+          "expectedInCandidates": 0,
+          "avgCandidates": 0.0,
+          "missingExamples": []
+        }
+      }
+    }
+  }
+}
