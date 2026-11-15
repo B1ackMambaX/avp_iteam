@@ -1,22 +1,17 @@
+---
+title: Модуль маппинга операций на договоры
+status: актуально
+---
 # Модуль маппинга операций на договоры
 
 ## Конвейер
 
-```
-PENDING ──► WAITING_NLP ──► PARSED ──► AUTO_MAPPED | AMBIGUOUS | NOT_FOUND | MANUAL_REQUIRED
-   │         (очередь nlp_task,  ▲
-   │          BeneficiaryDetectionService)
-   └──── режим marker: regex-парсер в процессе ────┘
-```
+Операция проходит `PENDING → WAITING_NLP → PARSED →` маппинг. Шаги, режимы
+`nlp` / `marker`, политика повторов и гарантии параллельности описаны
+в [architecture.md](architecture.md), раздел «Конвейер обработки».
 
-| Шаг | Класс | Что делает |
-|---|---|---|
-| Приём | `IntakeService` | `nlp`: ставит PENDING-операции в `nlp_task`, статус WAITING_NLP. `marker`: сразу разбирает назначение `RegexPaymentPurposeParser`, статус PARSED |
-| Разбор (NLP) | `NlpTaskWorker` | Забирает задачи `FOR UPDATE SKIP LOCKED`, вызывает `BeneficiaryDetectionService.detect` (параллельно, `pipeline.nlp.parallelism` запросов), пишет `operation_parse_result`, статус PARSED. Ошибка - повтор с паузой `retry-delay-seconds × попытка`; после `max-attempts` задача FAILED, операция всё равно идёт в маппинг (без автопривязки). Отложенные на повтор задачи подбирает следующий запуск конвейера |
-| Маппинг | `MappingService` | Пачка PARSED-операций: кандидаты, скоринг, решение, запись `operation_mapping_candidate` и итогового статуса |
-| Запуск | `PipelineRunner` | Крутит шаги, пока есть работа. REST `POST /api/pipeline/run` или фоном (`pipeline.scheduler.enabled=true`) |
-
-Все шаги забирают строки через `FOR UPDATE SKIP LOCKED`, поэтому безопасны при параллельном запуске (REST + планировщик, несколько инстансов).
+Модуль маппинга берёт пачку `PARSED`-операций: находит кандидатов, скорит,
+принимает решение и пишет `operation_mapping_candidate` и итоговый статус.
 
 ## Как ищутся кандидаты
 
@@ -55,6 +50,9 @@ Score = сумма, не больше 1. Сработавшие правила �
 
 ## REST
 
+Все запросы требуют HTTP Basic (`curl -u admin:пароль`).
+`/api/pipeline/run` и `/api/demo/reset` — только ADMIN, остальное — право `VIEW_DATA`.
+
 | Запрос | Что возвращает |
 |---|---|
 | `POST /api/pipeline/run?maxSeconds=600` | Прогон конвейера по всем новым операциям: сколько принято, разобрано, смаплено, скорость, статусы |
@@ -75,12 +73,12 @@ Score = сумма, не больше 1. Сработавшие правила �
    Без Python: добавить `-Dspring-boot.run.arguments=--pipeline.parser=marker`.
    При старте генерируется справочник и 10 000 операций (`application-demo.yml`). Объём меняется там же:
    `demo.contracts: 10000000`, `demo.clients: 3000000` - "как у заказчика" (генерация в Postgres займёт несколько минут и ~5 ГБ на диске).
-4. Прогнать конвейер: `curl -X POST localhost:8080/api/pipeline/run`
+4. Прогнать конвейер: `curl -u admin:пароль -X POST localhost:8080/api/pipeline/run`
 5. Посмотреть результат:
-   - `curl localhost:8080/api/demo/report` - точность по сценариям, `wrongAutoMapped` (привязки не к тому договору) должно быть 0;
-   - `curl localhost:8080/api/pipeline/stats` - распределение по статусам;
-   - `curl localhost:8080/api/operations/{id}/mapping` - разбор одной операции.
-6. Повторить прогон: `curl -X POST localhost:8080/api/demo/reset`, затем снова шаг 4.
+   - `curl -u admin:пароль localhost:8080/api/demo/report` - точность по сценариям, `wrongAutoMapped` (привязки не к тому договору) должно быть 0;
+   - `curl -u admin:пароль localhost:8080/api/pipeline/stats` - распределение по статусам;
+   - `curl -u admin:пароль localhost:8080/api/operations/{id}/mapping` - разбор одной операции.
+6. Повторить прогон: `curl -u admin:пароль -X POST localhost:8080/api/demo/reset`, затем снова шаг 4.
 
 Сценарии демо-операций (`DemoScenario`), правильный ответ зашит в `reference` (`DEMO-{сценарий}-{ожидаемый статус}-{договор}-{номер}`):
 

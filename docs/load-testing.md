@@ -1,4 +1,8 @@
-# Нагрузочное тестирование и мониторинг 
+---
+title: Нагрузочное тестирование и мониторинг
+status: актуально
+---
+# Нагрузочное тестирование и мониторинг
 Статус: промежуточный. Нагрузка x1/x2/x3/x10 измерена, главная причина падения скорости на больших объёмах локализована частично (см. «Открытые вопросы»).
 
 ## 1. Что сделано
@@ -32,7 +36,7 @@ python eval/stage_timeline.py x10 <start_unix> <end_unix>   # мс на вызо
 Смена объёма: остановить Java → `TRUNCATE operations CASCADE;` → запустить с новым `DEMO_OPERATIONS`.
 Полный сброс: `TRUNCATE operations, contracts, clients CASCADE;`.
 
-Проверки: `eval/check_security.py`, `eval/check_users_api.py` (`unknown id` в скрипте ожидает 409, реально 404 — скрипт неточен), `eval/check_nlp_admin_api.py`, тесты `mvn test`, `pytest` в `nlp-service`.
+Проверки: `eval/check_users_api.py` (`unknown id` в скрипте ожидает 409, реально 404 — скрипт неточен), `eval/nlp_settings_check.py`, тесты `mvn test`, `pytest` в `nlp-service`.
 
 ## 3. Результаты (чистая база: 1M договоров, порог NLP 0,5, Security включён, одна машина)
 
@@ -84,7 +88,7 @@ python eval/stage_timeline.py x10 <start_unix> <end_unix>   # мс на вызо
 
 ## 7. Открытые вопросы (для следующего этапа)
 
-1. **Скорость на больших объёмах.** Первым делом проверить гипотезу про мёртвые версии строк: во время прогона (мин. 8–10) выполнить SQL из `docs/load-testing.md#проверка` (n_dead_tup, backend_xmin, EXPLAIN запроса intake на пустом PENDING). Подтвердится — настроить autovacuum на `operations` и `nlp_task` либо убрать долгую транзакцию, затем один перепрогон x10 (120000). Не подтвердится — смотреть CPU Postgres, WAL/checkpoint, `NlpTaskWorker.saveSuccesses`, `batchSize` 50 → 500, `pg_stat_statements`.
+1. **Скорость на больших объёмах.** Первым делом проверить гипотезу про мёртвые версии строк: во время прогона (мин. 8–10) выполнить диагностический SQL (n_dead_tup, backend_xmin, EXPLAIN запроса intake на пустом PENDING). Подтвердится — настроить autovacuum на `operations` и `nlp_task` либо убрать долгую транзакцию, затем один перепрогон x10 (120000). Не подтвердится — смотреть CPU Postgres, WAL/checkpoint, `NlpTaskWorker.saveSuccesses`, `batchSize` 50 → 500, `pg_stat_statements`.
 2. **`maxStoredCandidates`** (раздел 6): Если поднять (например, до 20), перемерить x1 (хаос-метрика).
 3. **Индексы `idx_nlp_task_ready` и `idx_nlp_task_locked`** после `idx_nlp_task_open`, вероятно, лишние (первый читал 34 млн записей за 826 сканов), решение за вторым бэком.
 4. **Метрика памяти Python** (`py_rss_mb`) пустая: проверить лейбл `job` в `prom_timeline.py`.

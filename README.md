@@ -1,228 +1,202 @@
-# AVP ITeam - Оптимизация системы автоматической привязки операций к договорам
+# AVP ITeam — автоматическая привязка банковских операций к договорам
 
-Проект реализует MVP по привязке банковских операций к договорам
-в рамках требований 115-ФЗ: модуль маппинга операций с договорами
-по ИНН, модуль извлечения выгодоприобретателя из назначения платежа
-(с двумя сравниваемыми подходами - алгоритмическим и NLP)
+MVP системы привязки операций к договорам в рамках требований 115-ФЗ:
+по назначению платежа конвейер определяет, проводится ли платёж за третье
+лицо, извлекает ФИО выгодоприобретателя и связывает операцию с договором —
+автоматически или через очередь ручного разбора.
 
-## Стек
+## Проблема
 
-- **Java 21**, Spring Boot 3.3.5
-- **Vaadin 24 LTS** - UI
-- **PostgreSQL 16** - основная БД
-- **Flyway** - миграции схемы БД
-- **Python 3.14+**, FastAPI, Natasha - NLP-сервис для гипотезы Б
+Легаси-система заказчика распознаёт платежи за третье лицо по списку маркерных
+слов («за», «в пользу» + имя в тексте). Такой список принципиально конечен:
+на формулировках вне словаря recall падает до 30–40% — операции не
+распознаются и оседают в ручном разборе (подтверждено заказчиком и
+воспроизведено на holdout-выборке, см. [docs/nlp-hypothesis-result.md](docs/nlp-hypothesis-result.md)).
 
-## Текущая структура репозитория
+## Что умеет система
 
-```
-avp_iteam/
-├── backend/                 # Java/Spring Boot/Vaadin приложение
-├── nlp-service/             # Python-микросервис (гипотеза NLP)
-├── data/                    # Размеченный тестовый датасет
-├── docs/                    # Аналитика, сравнение гипотез
-├── docker-compose.yml       # Postgres для локальной разработки
-└── README.md
-```
+- **Семантическая классификация** «третье лицо / нет» — сравнение смысла
+  фразы с эталонами (embedding), а не точных словоформ: ловит «в интересах»,
+  «за счёт», «правопреемнику», «по доверенности» и т.д.
+- **Извлечение ФИО** (NER, Natasha) с нормализацией падежей и женских фамилий
+- **Сверка с данными операции**: извлечённое имя = плательщик или получатель →
+  ложное срабатывание, платёж не считается «за третье лицо»
+- **Скоринг кандидатов-договоров** по ИНН сторон, номеру договора из текста
+  и выгодоприобретателю — с прозрачными причинами (`matched_rules`,
+  `mapping_reason`): оператор видит, почему предложен договор
+- **Очередь ручного разбора** для неоднозначных случаев (AMBIGUOUS /
+  MANUAL_REQUIRED), ошибочных автопривязок нет
+- **Роли** READER / EDITOR / ADMIN, админка пользователей и настройки
+  NLP-классификатора без деплоя (порог, словари, версии, откат)
+- **Мониторинг**: Prometheus + готовый дашборд Grafana, метрики стадий конвейера
 
+## Результаты
 
-## 1. Поднятие базы данных
+| Метрика | Значение |
+|---|---|
+| Точность маппинга на демо-данных (7 сценариев + хаос-тексты) | ~95% |
+| Ошибочные автопривязки (не к тому договору) | 0 |
+| 120 000 операций (≈ сутки банка) на стенде из одной машины | ~14 минут |
+| Скорость самого маппинга (линейна на объёме) | 1300–1450 оп/с |
+| Классификация «третье лицо»: гибрид (правила + семантика) против маркерного подхода | F1 **94,1%** против 61,5% |
 
-Из корня репозитория:
+Детали и ограничения измерений: [docs/load-testing.md](docs/load-testing.md),
+[docs/nlp-hybrid-results.md](docs/nlp-hybrid-results.md).
+
+## Демо за 4 команды
+
+Все `/api`-эндпоинты требуют HTTP Basic (кроме `/actuator/health`).
+Перед стартом задайте `AVP_ADMIN_PASSWORD` — иначе пароль `admin`
+сгенерируется и один раз напечатается в лог.
 
 ```bash
-docker-compose up -d
+docker compose up -d                                                    # 1. PostgreSQL
+cd backend
+mvn spring-boot:run -Dspring-boot.run.profiles=demo \
+    -Dspring-boot.run.arguments=--pipeline.parser=marker               # 2. бэкенд + демо-данные (без Python)
+curl -u admin:$AVP_ADMIN_PASSWORD -X POST localhost:8080/api/pipeline/run   # 3. конвейер (только ADMIN)
+curl -u admin:$AVP_ADMIN_PASSWORD localhost:8080/api/demo/report            # 4. отчёт точности
 ```
 
-Проверка, что контейнер поднялся и БД готова принимать подключения:
+С Python-NLP (полный режим): поднять `nlp-service` (порт 8001) и убрать
+`--pipeline.parser=marker`. Сценарии демо и расшифровка отчёта —
+[docs/mapping.md](docs/mapping.md).
 
-```bash
-docker ps
+## Архитектура
+
+Три компонента: **backend** (Java 21, Spring Boot 3.3.5, Vaadin 24 LTS —
+конвейер, маппинг, REST, роли), **nlp-service** (Python 3.14+, FastAPI,
+Natasha — классификация и извлечение ФИО) и **инфраструктура**
+(PostgreSQL 16, Flyway, Prometheus, Grafana).
+
 ```
+PENDING ──► WAITING_NLP ──► PARSED ──► AUTO_MAPPED | AMBIGUOUS | NOT_FOUND | MANUAL_REQUIRED
+              очередь nlp_task        скоринг кандидатов, решение с причиной
+```
+
+Подробно: [docs/architecture.md](docs/architecture.md).
+
+## Документация
+
+Вся документация — в папке `docs/`, правится вместе с кодом.
+Полный индекс со статусами документов — [docs/README.md](docs/README.md).
+
+| Документ | О чём |
+|---|---|
+| [docs/architecture.md](docs/architecture.md) | Архитектура: компоненты, конвейер обработки, ключевые решения, API nlp-service |
+| [docs/database.md](docs/database.md) | Схема БД: таблицы, типы, индексы, история миграций V1–V9 |
+| [docs/mapping.md](docs/mapping.md) | Модуль маппинга: кандидаты, скоринг, правила решений, REST конвейера |
+| [docs/api-contract.md](docs/api-contract.md) | REST-контракт **для фронтенда**: роли, операции, админка NLP и пользователей (разделы 4–5 — ТЗ, не реализовано) |
+| [docs/access-matrix.md](docs/access-matrix.md) | Матрица прав и ролей READER / EDITOR / ADMIN |
+| [docs/load-testing.md](docs/load-testing.md) | Нагрузочное тестирование x1–x10: результаты, узкие места, открытые вопросы |
+| [docs/benchmarks.md](docs/benchmarks.md) | Как запускать бенчмарки гипотез А (regex) и Б (NLP) |
+| [docs/nlp-hypothesis-result.md](docs/nlp-hypothesis-result.md) | Исследования NLP: сравнение гипотез, гибрид, eval-сеты |
+
 ---
 
-## 2. Запуск бэкенда
+# Для разработчиков
 
-### Через IntelliJ IDEA
+## Быстрый старт
 
-1. Откройте проект (`File → Open`, указать папку `backend/`, либо корень
-   репозитория, если настроен как multi-module - см. примечание ниже)
-2. Дождитесь, пока Maven подтянет зависимости (прогресс-бар внизу IDE)
-3. Найдите класс `com.bank.avpiteam.AvpIteamApplication`
-4. Запустите через зелёную стрелку слева от класса, либо `Run`
+Требуется: JDK 21, Maven, Docker (Python 3.14+ — только для NLP-режима).
 
-### Через терминал
+1. Поднять БД и мониторинг: `docker compose up -d` (Postgres 5432,
+   Prometheus 9090, Grafana 3000)
+2. Перед первым стартом задать пароль администратора `AVP_ADMIN_PASSWORD`
+   (иначе сгенерируется и один раз напечатается в лог). При пустой таблице
+   `app_user` создаётся `admin`; `editor` и `reader` — дополнительно,
+   только в профиле `demo` (`AVP_EDITOR_PASSWORD`, `AVP_READER_PASSWORD`)
+3. Запустить приложение:
+   - IntelliJ: класс `com.bank.avpiteam.AvpIteamApplication` → Run
+   - терминал: `cd backend && mvn spring-boot:run`
+
+После обычного старта таблицы пустые — тестовые данные генерируются
+профилем `demo` или `datagen` (следующий раздел).
+
+В логах успешного старта: `Flyway ... Successfully applied 8 migrations` (V6 пропущена),
+затем `Started AvpIteamApplication`. Приложение — [http://localhost:8080](http://localhost:8080).
+
+## Переменные окружения
+
+| Переменная | По умолчанию | Зачем |
+|---|---|---|
+| `DB_URL` | `jdbc:postgresql://localhost:5432/avp_iteam` | Подключение к PostgreSQL |
+| `DB_USER` / `DB_PASSWORD` | `avp_iteam_user` / `avp_iteam_pass` | Учётная запись БД |
+| `PIPELINE_PARSER` | `nlp` | Режим разбора: `nlp` (Python-сервис) или `marker` (regex, без Python) |
+| `PIPELINE_SCHEDULER` | `false` | Фоновый прогон конвейера планировщиком (без ручного `POST /api/pipeline/run`) |
+| `NLP_SERVICE_URL` | `http://localhost:8001` | Адрес nlp-service |
+| `NLP_SEMANTIC_THRESHOLD` | `0.5` | Резервный порог семантики на случай недоступности `nlp_settings`; рабочее значение берётся из `nlp_settings` |
+| `AVP_ADMIN_PASSWORD` | пусто → генерируется | Пароль `admin`; создаётся при пустой `app_user` |
+| `AVP_EDITOR_PASSWORD`, `AVP_READER_PASSWORD` | пусто → генерируются | Пароли `editor` / `reader`; создаются только в профиле `demo` |
+| `SECURITY_METRICS_ALLOWED_CIDRS` | loopback + приватные сети | CIDR, с которых доступен `/actuator/prometheus` (для прода нужен basic-auth, см. [load-testing.md](docs/load-testing.md)) |
+| `DEMO_OPERATIONS` | `10000` | Число демо-операций в профиле `demo` (также `DEMO_CLIENTS`, `DEMO_CONTRACTS`, `DEMO_SEED`) |
+| `AVP_RUN_QUERY` | пусто | Нагрузочные скрипты (`nlp-service/eval`): query к `/api/pipeline/run`, напр. `maxSeconds=1800` |
+| `AVP_EXPECTED_CONTRACTS` | `1000000` | Нагрузочные скрипты: ожидаемый размер справочника для самопроверки замера |
+| `AVP_BASE`, `AVP_PROM` | `:8080`, `:9090` | Нагрузочные скрипты: адреса бэкенда и Prometheus |
+| `GRAFANA_ADMIN_PASSWORD` | `admin` | Пароль администратора Grafana (docker-compose) |
+
+## Тестовые данные
+
+Актуальный путь — профиль `demo` (как в демо выше): генерирует справочник
+и 10 000 операций. Дефолты в `application-demo.yml`: 300 000 клиентов,
+1 000 000 договоров; для объёма «как у заказчика» значения поднимают
+(`demo.contracts: 10000000`, `demo.clients: 3000000` — генерация в Postgres
+займёт несколько минут и ~5 ГБ). Повторный запуск безопасен: генератор
+пропускает заполненные таблицы. Повторный прогон конвейера —
+`POST /api/demo/reset`.
+
+Альтернативный генератор — профиль `datagen` (10 000 клиентов / 100 000
+договоров / 1 000 операций, настраивается в `application-datagen.yml`),
+использовался на этапе сравнения гипотез; для демо не нужен:
 
 ```bash
-cd backend
-mvn spring-boot:run
-```
-
-При успешном старте в логах будет:
-
-```
-Flyway ... Successfully applied 2 migrations to schema "public"
-...
-Started AvpIteamApplication in X.XXX seconds
-```
-
-Приложение доступно на [http://localhost:8080](http://localhost:8080)
-
-> **Важно:** при первом запуске таблицы ещё пустые. Для заполнения
-> тестовыми данными - см. раздел ниже про профиль `datagen`
-
----
-
-## 3. Генерация тестовых данных
-
-Генератор заполняет БД клиентами, договорами и операциями. Запускается
-только с профилем `datagen`, чтобы не плодить данные при обычном старте
-
-**Через IntelliJ:**
-`Run → Edit Configurations → Active profiles: datagen` → Run
-
-**Через терминал:**
-```bash
-cd backend
 mvn spring-boot:run -Dspring-boot.run.profiles=datagen
 ```
 
-Количество генерируемых записей настраивается в
-`application-datagen.yml`:
-
-```yaml
-datagen:
-  clients-count: 10000
-  contracts-count: 100000
-  operations-count: 1000
-```
-
-Повторный запуск с этим профилем безопасен - генератор проверяет,
-есть ли уже данные в БД, и пропускает генерацию, если таблицы не пусты
-
----
-
-## 4. Бенчмарк гипотезы А (алгоритмический парсер, Java)
-
-Сравнивает точность извлечения данных на размеченном датасете
-(`data/test-dataset.csv`) и замеряет производительность
-
-**Через IntelliJ:**
-`Run → Edit Configurations → Active profiles: benchmark-a` → Run
-
-**Через терминал:**
-```bash
-cd backend
-mvn spring-boot:run -Dspring-boot.run.profiles=benchmark-a
-```
-
-Результат печатается в консоль двумя блоками: `Фаза 1` (точность)
-и `Фаза 2` (производительность - throughput, CPU, память)
-
-Путь к датасету и количество итераций нагрузочного теста настраиваются
-в `application-benchmark-a.yml`
-
-### Снятие метрик CPU/RAM
-
-Во время `Фаза 2` есть пауза в 10 секунд - необходимо подключиться к процессу
-через **JConsole** (идёт в комплекте с JDK, запускается командой `jconsole`
-из терминала) или VisualVM. PID процесса выводится в лог перед паузой
-
----
-
-## 5. Бенчмарк гипотезы Б (NLP-парсер, Python)
-
-### Установка окружения (один раз)
+## NLP-сервис (полный режим)
 
 ```bash
 cd nlp-service
-python -m venv venv
-
-# Активация:
-# Windows:
-venv\Scripts\activate
-# macOS / Linux:
-source venv/bin/activate
-
-pip install -r requirements.txt
+python -m venv venv && venv\Scripts\activate    # Linux/macOS: source venv/bin/activate
+pip install -r requirements.txt                 # Natasha скачает модели, это надолго
+uvicorn app.main:app --host 0.0.0.0 --port 8001
 ```
 
-Установка займёт несколько минут - Natasha скачивает предобученные
-embedding-модели.
+Адрес настраивается переменной `NLP_SERVICE_URL` (по умолчанию
+`http://localhost:8001`). Без Python работает режим
+`--pipeline.parser=marker` (regex-парсер): дёшево и быстро, но не приводит
+ФИО из родительного падежа к именительному — разница подходов видна на
+сценарии `THIRD_PARTY_NAME`.
 
-### Запуск бенчмарка
+## Тесты
 
 ```bash
-# venv должен быть активирован
-python benchmark/run_benchmark.py
+cd backend && mvn test       # Java: маппинг, извлечение номера, security, настройки NLP (11 классов)
+cd nlp-service && pytest     # Python: gate-паттерны, нормализатор ФИО, полнота имени
 ```
 
-Аналогично Java-версии - печатает точность и метрики производительности.
-PID процесса выводится перед 10-секундной паузой для подключения
-системного монитора (Диспетчер задач / Activity Monitor / htop).
+Сценарные проверки REST (нужен поднятый стенд): `nlp-service/eval/check_users_api.py`,
+`nlp-service/eval/nlp_settings_check.py` — см. [docs/load-testing.md](docs/load-testing.md).
 
-## 6. Маппинг операций на договоры
+## Бенчмарки гипотез А/Б
 
-Конвейер `PENDING → разбор назначения → PARSED → маппинг` и правила скоринга описаны
-в [`docs/mapping.md`](docs/mapping.md). Быстрый прогон на демо-данных без Python:
-
-```bash
-cd backend
-mvn spring-boot:run -Dspring-boot.run.profiles=demo -Dspring-boot.run.arguments=--pipeline.parser=marker
-curl -X POST localhost:8080/api/pipeline/run
-curl localhost:8080/api/demo/report
-```
+Точность и производительность regex- и NLP-парсеров на размеченных датасетах:
+[docs/benchmarks.md](docs/benchmarks.md), результаты —
+[docs/nlp-hypothesis-result.md](docs/nlp-hypothesis-result.md).
 
 ## Схема БД
 
-Миграции Flyway: `V1__init_schema.sql` (базовые таблицы),
-`V2__mapping_schema.sql` (схема под маппинг и очередь NLP).
+PostgreSQL 16, Flyway-миграции V1–V9 (`backend/src/main/resources/db/migration/`, V6 не используется).
+Таблицы, статусы, связи, индексы и ER-диаграммы — [docs/database.md](docs/database.md).
 
-| Таблица | Назначение | Ключевые поля |
-|---|---|---|
-| `clients` | Клиенты банка (ФЛ, ИП, ЮЛ в одной таблице) | `inn` (nullable), `client_type`, `full_name_norm`, `is_bank_client` |
-| `contracts` | Договоры | `contract_number`, `contract_number_norm`, `contract_type` |
-| `contract_parties` | Стороны договора в ролях `COUNTERPARTY` / `AGENT` / `BENEFICIARY` | `contract_id`, `client_id`, `role` |
-| `operations` | Операции (платежи) из АБС | `reference`, `sender_inn`, `receiver_inn`, `contract_id`, `status`, `mapped_by` |
-| `operation_parse_result` | Результаты парсинга назначения платежа (маркерный и NLP) | `operation_id`, `parser`, `extracted_name_norm`, `party_role`, `confidence` |
-| `operation_mapping_candidate` | Договоры-кандидаты для операции со скорингом | `operation_id`, `contract_id`, `score`, `matched_rules` |
-| `nlp_task` | Очередь задач на NLP-разбор | `operation_id`, `status`, `attempts`, `next_try_at`, `locked_until` |
-| `flyway_schema_history` | Служебная таблица миграций | - |
+## Структура репозитория
 
-### Связи
-
-- `contract_parties.contract_id → contracts.id`, `contract_parties.client_id → clients.id` - стороны договора;
-  у договора может быть несколько сторон одной роли
-- `operations.contract_id → contracts.id` - итоговый привязанный договор (nullable, заполняется модулем маппинга)
-- `operation_parse_result.operation_id`, `operation_mapping_candidate.operation_id`, `nlp_task.operation_id → operations.id`
-- `operation_mapping_candidate.contract_id → contracts.id`
-
-![img_2.png](docs/img_2.png)
-![img.png](docs/db2.png)
-
-### Нормализация для поиска
-
-Вычисляются в БД (generated columns), в Java только читаются:
-
-- `clients.full_name_norm` - `фамилия имя отчество` в нижнем регистре, `ё → е`, одиночные пробелы.
-  По тому же правилу считается `operation_parse_result.extracted_name_norm`,
-  поэтому ФИО из парсера сравнивается с клиентом простым равенством
-- `contracts.contract_number_norm` - только буквы и цифры, верхний регистр, `Ё → Е`
-  (`№ 110-кр` → `110КР`)
-
-### Индексы для маппинга
-
-Маппинг ищет в `clients` и `contract_parties`, а не в `operations`:
-
-- `clients`: `inn`, `full_name_norm`
-- `contract_parties`: `(client_id, role, contract_id)` - все договоры клиента одним индексным поиском
-- `contracts`: `contract_number_norm`
-- `operations`: частичный индекс по `id` для `status = 'PENDING'` - выборка пачками
-- `nlp_task`: частичные индексы для готовых (`NEW`) и зависших (`IN_PROGRESS`) задач
-
----
-
-## Документация по проведенному сравнению
-
-- [`docs/hypothesis-results.md`](docs/hypothesis-result.md) - сравнение гипотез парсинга (точность, производительность, найденные ограничения)
-
+```
+avp_iteam/
+├── backend/       # Java/Spring Boot/Vaadin: конвейер, маппинг, REST, роли
+├── nlp-service/   # Python/FastAPI/Natasha: классификация, NER, eval-скрипты
+├── data/          # размеченные датасеты (основной + holdout)
+├── docs/          # вся документация проекта (индекс: docs/README.md)
+├── monitoring/    # Prometheus + дашборд Grafana
+└── docker-compose.yml
+```
