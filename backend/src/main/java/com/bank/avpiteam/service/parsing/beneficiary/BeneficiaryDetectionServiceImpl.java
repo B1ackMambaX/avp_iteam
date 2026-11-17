@@ -46,7 +46,7 @@ public class BeneficiaryDetectionServiceImpl implements BeneficiaryDetectionServ
                 settings.negationWords()
         );
 
-        boolean isThirdParty = classification.isThirdParty();
+        boolean isThirdParty = classification.thirdParty();
 
         if (!isThirdParty) {
             return new BeneficiaryDetectionResult(
