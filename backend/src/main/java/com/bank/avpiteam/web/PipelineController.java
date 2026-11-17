@@ -3,6 +3,8 @@ package com.bank.avpiteam.web;
 import com.bank.avpiteam.service.mapping.MappingQueryService;
 import com.bank.avpiteam.service.pipeline.PipelineRunner;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Duration;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @RestController
 @RequestMapping("/api")
@@ -22,10 +25,22 @@ public class PipelineController {
     private final PipelineRunner runner;
     private final MappingQueryService mappingQueryService;
 
+    private final AtomicBoolean running = new AtomicBoolean(false);
+
     /** Прогнать конвейер по всем новым операциям: разбор назначения + маппинг. */
     @PostMapping("/pipeline/run")
-    public PipelineRunner.RunReport run(@RequestParam(defaultValue = "600") int maxSeconds) {
-        return runner.runUntilDrained(Duration.ofSeconds(maxSeconds));
+    public ResponseEntity<?> run(@RequestParam(defaultValue = "600") int maxSeconds) {
+        if (!running.compareAndSet(false, true)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                    ProblemDetail.forStatusAndDetail(
+                            HttpStatus.CONFLICT, "Конвейер уже запущен"));
+        }
+        try {
+            int limit = Math.max(1, Math.min(maxSeconds, 3600));
+            return ResponseEntity.ok(runner.runUntilDrained(Duration.ofSeconds(limit)));
+        } finally {
+            running.set(false);
+        }
     }
 
     /** Сколько операций в каком статусе, состояние очереди NLP. */

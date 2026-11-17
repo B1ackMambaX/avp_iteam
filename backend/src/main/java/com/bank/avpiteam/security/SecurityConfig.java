@@ -50,7 +50,11 @@ public class SecurityConfig {
                                         metricsNets.stream().anyMatch(m -> m.matches(ctx.getRequest()))))
                         .requestMatchers(antMatcher("/swagger-ui/**"), antMatcher("/swagger-ui.html"),
                                 antMatcher("/v3/api-docs/**")).permitAll()
-                        .requestMatchers(antMatcher("/api/pipeline/**"), antMatcher("/api/demo/reset"))
+                        .requestMatchers(antMatcher(HttpMethod.POST, "/api/pipeline/run"))
+                        .hasAuthority(Permission.RUN_PIPELINE.name())
+                        .requestMatchers(antMatcher(HttpMethod.GET, "/api/pipeline/stats"))
+                        .hasAuthority(Permission.VIEW_DATA.name())
+                        .requestMatchers(antMatcher("/api/demo/reset"))
                         .hasRole(Role.ADMIN.name())
                         .requestMatchers(antMatcher(get, "/api/demo/report")).hasAuthority(view)
                         .requestMatchers(antMatcher("/api/me")).authenticated()
