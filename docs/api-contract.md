@@ -4,10 +4,6 @@ status: актуально
 ---
 # API avp_iteam — контракт для фронтенда
 
-> Разделы 4 (кроме деталей маппинга) и 5 — ТЗ: эндпоинты списков, очереди
-> разбора и `resolve` ещё не реализованы, правила доступа к ним в `SecurityConfig`
-> уже готовы. Остальное соответствует коду.
-
 ## Базовая информация
 
 - **Base URL:** `http://localhost:8080`
@@ -22,11 +18,21 @@ status: актуально
 
 | Право | Что даёт | READER | EDITOR | ADMIN |
 |---|---|:-:|:-:|:-:|
-| `VIEW_DATA` | Смотреть операции, договоры, результаты маппинга, отчёты | ✓ | ✓ | ✓ |
-| `EDIT_MAPPING` | Ручная привязка и исправление | – | ✓ | ✓ |
+| `VIEW_DATA` | Смотреть операции, договоры, клиентов, стороны, кандидатов, результаты парсинга | ✓ | ✓ | ✓ |
+| `EXPORT_DATA` | Экспорт — только то, что доступно для просмотра | ✓ | ✓ | ✓ |
+| `RUN_PIPELINE` | Запуск конвейера (разбор + маппинг) | – | ✓ | ✓ |
+| `EDIT_MAPPING` | Ручное подтверждение, изменение и отмена привязки | – | ✓ | ✓ |
+| `IMPORT_OPERATIONS` | Импорт операций из CSV | – | ✓ | ✓ |
+| `EDIT_REFERENCE` | Создание и редактирование клиентов, договоров и их сторон | – | ✓ | ✓ |
+| `DELETE_REFERENCE` | Удаление клиентов и договоров — только без ссылок на них | – | ✓ | ✓ |
+| `VIEW_NLP_TASKS` | Задачи NLP и их последние ошибки | – | – | ✓ |
+| `RECOVER_STATUS` | Служебные переходы статусов (например, при зависании) | – | – | ✓ |
+| `RESET_NLP_TASK` | Перезапуск и сброс NLP-задач | – | – | ✓ |
 | `MANAGE_NLP` | Настройки NLP (порог, слова, тесты) | – | – | ✓ |
 | `MANAGE_USERS` | Управление пользователями | – | – | ✓ |
 
+- Источник истины — `RolePermissions`; матрица построчно сверяется тестом
+  `RolePermissionsMatrixTest` с [access-matrix.md](access-matrix.md).
 - Кнопка «Админка» видна, если `canSeeAdminPanel = true` (только у `ADMIN`).
 - Настоящая проверка прав — на сервере (403).
 
@@ -40,7 +46,9 @@ status: актуально
 {
   "username": "admin",
   "role": "ADMIN",
-  "permissions": ["EDIT_MAPPING", "MANAGE_NLP", "MANAGE_USERS", "VIEW_DATA"],
+  "permissions": ["DELETE_REFERENCE", "EDIT_MAPPING", "EDIT_REFERENCE", "EXPORT_DATA",
+                  "IMPORT_OPERATIONS", "MANAGE_NLP", "MANAGE_USERS", "RECOVER_STATUS",
+                  "RESET_NLP_TASK", "RUN_PIPELINE", "VIEW_DATA", "VIEW_NLP_TASKS"],
   "canSeeAdminPanel": true
 }
 ```
@@ -258,7 +266,8 @@ status: актуально
 
 | Метод | Путь | Назначение |
 |---|---|---|
-| POST | `/api/pipeline/run` | Запуск конвейера (**только ADMIN**) |
+| POST | `/api/pipeline/run` | Запуск конвейера (**ADMIN и EDITOR**, READER — 403; повторный запрос при активном прогоне — 409) |
+| GET | `/api/pipeline/stats` | Статистика конвейера (`VIEW_DATA` — все роли) |
 | POST | `/api/demo/reset` | Сброс демо-операций (**только ADMIN**) |
 | GET | `/api/demo/report` | Отчёт по точности (`VIEW_DATA`) |
 | GET | `/actuator/health` | Проверка живости (без авторизации) |
