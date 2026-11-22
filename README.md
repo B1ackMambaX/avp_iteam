@@ -54,7 +54,7 @@ docker compose up -d                                                    # 1. Pos
 cd backend
 mvn spring-boot:run -Dspring-boot.run.profiles=demo \
     -Dspring-boot.run.arguments=--pipeline.parser=marker               # 2. бэкенд + демо-данные (без Python)
-curl -u admin:$AVP_ADMIN_PASSWORD -X POST localhost:8080/api/pipeline/run   # 3. конвейер (только ADMIN)
+curl -u admin:$AVP_ADMIN_PASSWORD -X POST localhost:8080/api/pipeline/run   # 3. конвейер (ADMIN/EDITOR)
 curl -u admin:$AVP_ADMIN_PASSWORD localhost:8080/api/demo/report            # 4. отчёт точности
 ```
 

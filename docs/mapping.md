@@ -51,7 +51,9 @@ Score = сумма, не больше 1. Сработавшие правила �
 ## REST
 
 Все запросы требуют HTTP Basic (`curl -u admin:пароль`).
-`/api/pipeline/run` и `/api/demo/reset` — только ADMIN, остальное — право `VIEW_DATA`.
+`/api/pipeline/run` — право `RUN_PIPELINE` (ADMIN и EDITOR; повторный запрос
+при активном прогоне — 409), `/api/demo/reset` — только ADMIN,
+`/api/pipeline/stats` и остальное — право `VIEW_DATA`.
 
 | Запрос | Что возвращает |
 |---|---|

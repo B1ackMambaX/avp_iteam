@@ -53,7 +53,10 @@ PENDING ──► WAITING_NLP ──► PARSED ──► AUTO_MAPPED | AMBIGUOUS
   `extracted_name_norm` — ФИО из парсера сравнивается с клиентом простым равенством.
 - **Настраиваемый классификатор**: порог и списки слов лежат в `nlp_settings`,
   меняются через админку с версионированием и откатом, без деплоя.
-- **Роли и права**: READER / EDITOR / ADMIN → `VIEW_DATA` / `EDIT_MAPPING` / `MANAGE_NLP` / `MANAGE_USERS`; всё stateless на HTTP Basic.
+- **Роли и права**: READER / EDITOR / ADMIN, полный набор прав — в `RolePermissions`
+  (12 пермишнов, включая `RUN_PIPELINE`), построчно сверяется с
+  [access-matrix.md](access-matrix.md) тестом `RolePermissionsMatrixTest`;
+  всё stateless на HTTP Basic.
 - **Наблюдаемость**: Micrometer → Prometheus; метрики стадий конвейера
   `avp_pipeline_stage_seconds{stage}` и метрики NLP-сервиса; готовый дашборд Grafana.
 
