@@ -1,6 +1,12 @@
 ---
-
+title: REST-контракт для фронтенда
+status: актуально
+---
 # API avp_iteam — контракт для фронтенда
+
+> Разделы 4 и 5 реализованы (BE-1 … BE-4). Vaadin-экраны вызывают те же сервисы
+> напрямую — сигнатуры, DTO и правила: [vaadin-backend.md](vaadin-backend.md).
+> Остальное соответствует коду.
 
 ## Базовая информация
 
@@ -16,11 +22,21 @@
 
 | Право | Что даёт | READER | EDITOR | ADMIN |
 |---|---|:-:|:-:|:-:|
-| `VIEW_DATA` | Смотреть операции, договоры, результаты маппинга, отчёты | ✓ | ✓ | ✓ |
-| `EDIT_MAPPING` | Ручная привязка и исправление | – | ✓ | ✓ |
+| `VIEW_DATA` | Смотреть операции, договоры, клиентов, стороны, кандидатов, результаты парсинга | ✓ | ✓ | ✓ |
+| `EXPORT_DATA` | Экспорт — только то, что доступно для просмотра | ✓ | ✓ | ✓ |
+| `RUN_PIPELINE` | Запуск конвейера (разбор + маппинг) | – | ✓ | ✓ |
+| `EDIT_MAPPING` | Ручное подтверждение, изменение и отмена привязки | – | ✓ | ✓ |
+| `IMPORT_OPERATIONS` | Импорт операций из CSV | – | ✓ | ✓ |
+| `EDIT_REFERENCE` | Создание и редактирование клиентов, договоров и их сторон | – | ✓ | ✓ |
+| `DELETE_REFERENCE` | Удаление клиентов и договоров — только без ссылок на них | – | ✓ | ✓ |
+| `VIEW_NLP_TASKS` | Задачи NLP и их последние ошибки | – | – | ✓ |
+| `RECOVER_STATUS` | Служебные переходы статусов (например, при зависании) | – | – | ✓ |
+| `RESET_NLP_TASK` | Перезапуск и сброс NLP-задач | – | – | ✓ |
 | `MANAGE_NLP` | Настройки NLP (порог, слова, тесты) | – | – | ✓ |
 | `MANAGE_USERS` | Управление пользователями | – | – | ✓ |
 
+- Источник истины — `RolePermissions`; матрица построчно сверяется тестом
+  `RolePermissionsMatrixTest` с [access-matrix.md](access-matrix.md).
 - Кнопка «Админка» видна, если `canSeeAdminPanel = true` (только у `ADMIN`).
 - Настоящая проверка прав — на сервере (403).
 
@@ -34,7 +50,9 @@
 {
   "username": "admin",
   "role": "ADMIN",
-  "permissions": ["EDIT_MAPPING", "MANAGE_NLP", "MANAGE_USERS", "VIEW_DATA"],
+  "permissions": ["DELETE_REFERENCE", "EDIT_MAPPING", "EDIT_REFERENCE", "EXPORT_DATA",
+                  "IMPORT_OPERATIONS", "MANAGE_NLP", "MANAGE_USERS", "RECOVER_STATUS",
+                  "RESET_NLP_TASK", "RUN_PIPELINE", "VIEW_DATA", "VIEW_NLP_TASKS"],
   "canSeeAdminPanel": true
 }
 ```
@@ -72,9 +90,12 @@
 | GET | `/api/operations?status=&from=&to=&q=&page=&size=` | Список операций с фильтрами |
 | GET | `/api/operations/{id}/mapping` | Детали маппинга одной операции |
 | GET | `/api/review-queue?status=AMBIGUOUS\|MANUAL_REQUIRED&page=&size=` | Очередь на ручной разбор |
-| GET | `/api/contracts?q=&page=&size=` | Список договоров |
+| GET | `/api/contracts?q=&page=&size=` | Поиск договора по номеру или ИНН стороны |
+| GET | `/api/stats/summary?date=YYYY-MM-DD` | Бизнес-дашборд главной (раздел 4a) |
 
-**Статусы операции:** `PENDING`, `WAITING_NLP`, `PARSED`, `AUTO_MAPPED`, `AMBIGUOUS`, `NOT_FOUND`, `MANUAL_REQUIRED`.
+**Статусы операции:** `PENDING`, `WAITING_NLP`, `PARSED`, `AUTO_MAPPED`, `MANUAL_MAPPED` (подтверждено оператором), `AMBIGUOUS`, `NOT_FOUND`, `MANUAL_REQUIRED`.
+
+Фильтры списка: `status` (можно несколько: `?status=AMBIGUOUS&status=NOT_FOUND`), `from` и `to` — дата операции, обе включительно, `q` — подстрока в назначении, отправителе, получателе или точный ИНН / `reference`; `size` до 200, по умолчанию 50. Сортировка: дата операции по убыванию, затем `operationId` по убыванию. Кандидатов у операции — до 20. Подробности правил — в [vaadin-backend.md](vaadin-backend.md).
 
 **Элемент списка операций:**
 
@@ -82,7 +103,9 @@
 {
   "operationId": 600001,
   "date": "2025-01-15",
+  "operationDate": "2025-01-15T10:20:30",
   "amount": 15000.00,
+  "currencyCode": "643",
   "senderName": "ООО Ромашка",
   "receiverName": "ИП Иванов",
   "paymentPurpose": "Оплата по договору №123...",
@@ -125,17 +148,50 @@
 
 ---
 
-## 5. Ручное подтверждение (`EDIT_MAPPING`)
+## 4a. Бизнес-дашборд (`VIEW_DATA`)
+
+**`GET /api/stats/summary?date=2026-11-22`** — что произошло с операциями, загруженными за день (`date` по умолчанию — сегодня). Реальный ответ после прогона x10 (120 000 операций):
+
+```json
+{
+  "date": "2026-11-22",
+  "demo": true,
+  "loaded": 120000,
+  "inProgress": 0,
+  "autoMapped": 77067,
+  "manuallyMapped": 0,
+  "awaitingManual": { "ambiguous": 24979, "manualRequired": 2954 },
+  "notFound": 15000,
+  "autoShare": 0.6422,
+  "backlogAwaitingManual": 27933
+}
+```
+
+- Корзины не пересекаются: `inProgress + autoMapped + manuallyMapped + awaitingManual.ambiguous + awaitingManual.manualRequired + notFound = loaded`.
+- `inProgress` — `PENDING`, `WAITING_NLP`, `PARSED`; `manuallyMapped` — `MANUAL_MAPPED`; `notFound` — включая ручное отклонение.
+- `autoShare = autoMapped / (loaded − inProgress)`, 4 знака; 0, если делить не на что.
+- `backlogAwaitingManual` — все `AMBIGUOUS` + `MANUAL_REQUIRED`, **за все дни**.
+- `demo: true` — сервер запущен с профилем `demo`.
+- День — полуинтервал `[date, date+1)` по дате загрузки в часовом поясе сервера из конфига (`Europe/Moscow`).
+- Ответ кешируется на 30 с; кеш сбрасывается после прогона конвейера, сброса демо и ручного решения.
+- Правила подробно: [analysis/stats-status-mapping.md](analysis/stats-status-mapping.md).
+
+---
+
+## 5. Ручное решение (`EDIT_MAPPING`)
 
 **`POST /api/operations/{id}/mapping/resolve`**
 
 ```json
-{ "contractId": 123456, "comment": "Подтверждено по ИНН" }
+{ "contractId": 123456, "comment": "Подтверждено по ИНН", "version": 1795332903123456 }
 ```
 
-- `contractId: null` = «договор не найден, отклонить».
-- Возвращает обновлённые детали маппинга.
-- Бэкенд сохраняет `decidedBy`, `decidedAt`, `source=MANUAL`.
+- `contractId` — подтверждение → статус `MANUAL_MAPPED`; `contractId: null` — «договор не найден» → `NOT_FOUND`. В обоих случаях `mappingSource = MANUAL`, автор и время сохраняются, история — в `operation_manual_decision`.
+- Только из `AMBIGUOUS` и `MANUAL_REQUIRED`; принятое решение не исправляется.
+- Договор не из списка кандидатов допустим, но с комментарием. Комментарий до 1000 символов, обязателен при отклонении и при договоре не из кандидатов.
+- `version` — `operation.version` из прочитанной карточки; если карточку изменили, ответ 409 `STALE_CARD`.
+- Возвращает обновлённую карточку (`operation`, `parse`, `candidates`).
+- Ошибки: 404 `OPERATION_NOT_FOUND` / `CONTRACT_NOT_FOUND`, 409 `FORBIDDEN_TRANSITION` / `STALE_CARD`, 400 `CONTRACT_NOT_ALLOWED` или ошибки валидации поля `comment`, 403 без `EDIT_MAPPING`. Код — в поле `code` ответа.
 
 ---
 
@@ -252,9 +308,11 @@
 
 | Метод | Путь | Назначение |
 |---|---|---|
-| POST | `/api/pipeline/run` | Запуск конвейера (**только ADMIN**) |
+| POST | `/api/pipeline/run` | Запуск конвейера (**ADMIN и EDITOR**, READER — 403; повторный запрос при активном прогоне — 409) |
+| GET | `/api/pipeline/stats` | Статистика конвейера (`VIEW_DATA` — все роли) |
 | POST | `/api/demo/reset` | Сброс демо-операций (**только ADMIN**) |
 | GET | `/api/demo/report` | Отчёт по точности (`VIEW_DATA`) |
+| GET | `/api/demo/samples` | ID демо-операций для сквозной проверки экранов (`VIEW_DATA`) |
 | GET | `/actuator/health` | Проверка живости (без авторизации) |
 
 ---

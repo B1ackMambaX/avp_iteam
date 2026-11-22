@@ -12,6 +12,9 @@ spring:
       connection-timeout: 30000
 
   jpa:
+    # Без OSIV: иначе POST /api/pipeline/run держит один EntityManager на весь прогон,
+    # сущности копятся, и каждый коммит проверяет их все (x10: 930 с -> 107 с, docs/analysis/perf-db-findings.md)
+    open-in-view: false
     hibernate:
       ddl-auto: validate
     show-sql: false
@@ -52,6 +55,12 @@ mapping:
     both-sides: 0.2
     contract-number: 0.4
     beneficiary-name: 0.3
+
+# Бизнес-дашборд /api/stats/summary
+stats:
+  # Граница операционного дня; не зависит от часового пояса машины
+  time-zone: ${STATS_TIME_ZONE:Europe/Moscow}
+  cache-ttl: 30s
 
 server:
   port: 8080

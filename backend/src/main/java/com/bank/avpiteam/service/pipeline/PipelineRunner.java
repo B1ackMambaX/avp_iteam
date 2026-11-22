@@ -2,8 +2,10 @@ package com.bank.avpiteam.service.pipeline;
 
 import com.bank.avpiteam.config.PipelineProperties;
 import com.bank.avpiteam.service.mapping.MappingService;
+import com.bank.avpiteam.stats.OperationsChangedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +29,8 @@ public class PipelineRunner {
     private final PipelineProperties properties;
     private final JdbcTemplate jdbc;
     private final StageTimers stages;
+    private final ApplicationEventPublisher events;
+
     public record RunReport(
             String parser,
             long millis,
@@ -82,6 +86,9 @@ public class PipelineRunner {
                 break;
             }
         }
+
+        // Счётчики дашборда (/api/stats/summary) устарели
+        events.publishEvent(new OperationsChangedEvent("pipeline"));
 
         long millis = (System.nanoTime() - started) / 1_000_000;
         double perSecond = mappingMillis == 0 ? 0 : mapped * 1000.0 / mappingMillis;

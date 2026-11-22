@@ -7,6 +7,8 @@ public interface NlpServiceClient {
                                     List<String> triggerWords, List<String> negationWords);
     ExtractionResponse extractName(String paymentPurpose);
 
-    record ClassificationResponse(boolean isThirdParty, double score, String decision) {}
+    // Имена компонентов = поля JSON Python-сервиса (isThirdParty, score, decision, negativeSimilarity)
+    record ClassificationResponse(boolean isThirdParty, double score, String decision,
+                                  Double negativeSimilarity) {}
     record ExtractionResponse(String fullName) {}
 }

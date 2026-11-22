@@ -1,7 +1,11 @@
+---
+title: Результаты гибрида B на eval_set_v1
+status: архив
+---
 # Результаты замеров: варианты A и B на eval_set_v1
 
 Набор: коммит `9b95d25`. Скрипт: `<хеш>`. Сервис: `<хеш>`, ветка `feature/nlp-name-fixes`.
-Правила и предсказания: `docs/analysis/hybrid-markers.md`, коммит `<хеш>`.
+Правила и предсказания: [nlp-hybrid-rules.md](nlp-hybrid-rules.md), коммит `<хеш>`.
 
 ## Результат
 

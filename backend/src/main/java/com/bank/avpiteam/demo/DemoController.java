@@ -1,6 +1,8 @@
 package com.bank.avpiteam.demo;
 
+import com.bank.avpiteam.stats.OperationsChangedEvent;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +23,7 @@ import java.util.*;
 public class DemoController {
 
     private final JdbcTemplate jdbc;
+    private final ApplicationEventPublisher events;
 
     private static final class ScenarioStats {
         int total;
@@ -104,14 +107,53 @@ public class DemoController {
         int candidates = jdbc.update("DELETE FROM operation_mapping_candidate WHERE operation_id IN (" + demoOperations + ")");
         int parses = jdbc.update("DELETE FROM operation_parse_result WHERE operation_id IN (" + demoOperations + ")");
         int tasks = jdbc.update("DELETE FROM nlp_task WHERE operation_id IN (" + demoOperations + ")");
+        int decisions = jdbc.update("DELETE FROM operation_manual_decision WHERE operation_id IN (" + demoOperations + ")");
         int operations = jdbc.update("""
             UPDATE operations
             SET status = 'PENDING', contract_id = NULL, mapping_reason = NULL,
-                mapped_by = NULL, mapped_at = NULL, updated_at = now()
+                mapped_by = NULL, mapped_at = NULL, mapping_source = NULL, updated_at = now()
             WHERE reference LIKE 'DEMO-%' OR reference LIKE 'CHAOS-%'
             """);
+        events.publishEvent(new OperationsChangedEvent("demo-reset"));
         return Map.of("operations", operations, "candidatesDeleted", candidates,
-                "parseResultsDeleted", parses, "nlpTasksDeleted", tasks);
+                "parseResultsDeleted", parses, "nlpTasksDeleted", tasks, "manualDecisionsDeleted", decisions);
+    }
+
+    /**
+     * ID демо-операций для сквозной проверки экранов (null - такой операции сейчас нет):
+     *  withoutParse - назначение не разобрано (до запуска конвейера или NLP не ответил);
+     *  multipleCandidates - в очереди, кандидатов больше всего;
+     *  toConfirm / toReject - в очереди с кандидатами (AMBIGUOUS) и без автопривязки (MANUAL_REQUIRED).
+     */
+    @GetMapping("/samples")
+    public Map<String, Object> samples() {
+        Map<String, Object> out = new LinkedHashMap<>();
+        out.put("withoutParse", firstId("""
+                SELECT o.id FROM operations o
+                WHERE NOT EXISTS (SELECT 1 FROM operation_parse_result r WHERE r.operation_id = o.id)
+                ORDER BY o.id LIMIT 1
+                """));
+        out.put("multipleCandidates", firstId("""
+                SELECT m.operation_id FROM operation_mapping_candidate m
+                JOIN operations o ON o.id = m.operation_id AND o.status IN ('AMBIGUOUS', 'MANUAL_REQUIRED')
+                GROUP BY m.operation_id ORDER BY count(*) DESC, m.operation_id LIMIT 1
+                """));
+        out.put("toConfirm", firstId("""
+                SELECT o.id FROM operations o
+                WHERE o.status = 'AMBIGUOUS'
+                  AND EXISTS (SELECT 1 FROM operation_mapping_candidate m WHERE m.operation_id = o.id)
+                ORDER BY o.id LIMIT 1
+                """));
+        out.put("toReject", firstId("""
+                SELECT o.id FROM operations o WHERE o.status = 'MANUAL_REQUIRED' ORDER BY o.id LIMIT 1
+                """));
+        out.put("users", List.of("admin (ADMIN)", "editor (EDITOR)", "reader (READER)"));
+        return out;
+    }
+
+    private Long firstId(String sql) {
+        List<Long> ids = jdbc.queryForList(sql, Long.class);
+        return ids.isEmpty() ? null : ids.get(0);
     }
 
     private Map<String, Object> chaosReport() {

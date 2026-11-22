@@ -4,6 +4,9 @@ services:
   postgres:
     image: postgres:16-alpine
     container_name: avp_iteam_postgres
+    # pg_stat_statements - статистика запросов для диагностики производительности
+    # (после первого старта: CREATE EXTENSION IF NOT EXISTS pg_stat_statements; через psql)
+    command: postgres -c shared_preload_libraries=pg_stat_statements -c pg_stat_statements.track=all
     environment:
       POSTGRES_DB: avp_iteam
       POSTGRES_USER: avp_iteam_user

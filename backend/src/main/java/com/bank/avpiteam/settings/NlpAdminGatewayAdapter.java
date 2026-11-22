@@ -23,7 +23,7 @@ class NlpAdminGatewayAdapter implements NlpAdminGateway {
     public Classification classify(String text, double threshold,
                                    List<String> triggerWords, List<String> negationWords) {
         var r = client.classify(text, threshold, triggerWords, negationWords);
-        return new Classification(r.decision(), r.score(), r.isThirdParty());
+        return new Classification(r.decision(), r.score(), r.isThirdParty(), r.negativeSimilarity());
     }
 
     @Override

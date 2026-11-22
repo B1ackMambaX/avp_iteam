@@ -3,7 +3,7 @@ package com.bank.avpiteam.settings;
 import java.util.List;
 
 public interface NlpAdminGateway {
-    record Classification(String decision, double score, boolean thirdParty) {}
+    record Classification(String decision, double score, boolean thirdParty, Double negativeSimilarity) {}
     record Examples(List<String> positive, List<String> negative) {}
 
     Classification classify(String text, double threshold,
