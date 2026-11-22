@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authorization.AuthorizationDecision;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -19,6 +20,8 @@ import org.springframework.security.web.util.matcher.IpAddressMatcher;
 
 @Configuration
 @EnableWebSecurity
+// @PreAuthorize на сервисах: Vaadin-экраны вызывают их напрямую, минуя HTTP-фильтры
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Bean
@@ -57,6 +60,8 @@ public class SecurityConfig {
                         .requestMatchers(antMatcher("/api/demo/reset"))
                         .hasRole(Role.ADMIN.name())
                         .requestMatchers(antMatcher(get, "/api/demo/report")).hasAuthority(view)
+                        .requestMatchers(antMatcher(get, "/api/demo/samples")).hasAuthority(view)
+                        .requestMatchers(antMatcher(get, "/api/stats/**")).hasAuthority(view)
                         .requestMatchers(antMatcher("/api/me")).authenticated()
                         .requestMatchers(antMatcher("/api/admin/nlp/**")).hasAuthority(nlp)
                         .requestMatchers(antMatcher("/api/admin/users/**")).hasAuthority(users)
