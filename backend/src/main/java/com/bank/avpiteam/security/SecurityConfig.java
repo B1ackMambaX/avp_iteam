@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authorization.AuthorizationDecision;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -19,6 +20,8 @@ import org.springframework.security.web.util.matcher.IpAddressMatcher;
 
 @Configuration
 @EnableWebSecurity
+// @PreAuthorize на сервисах: Vaadin-экраны вызывают их напрямую, минуя HTTP-фильтры
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Bean
@@ -50,9 +53,15 @@ public class SecurityConfig {
                                         metricsNets.stream().anyMatch(m -> m.matches(ctx.getRequest()))))
                         .requestMatchers(antMatcher("/swagger-ui/**"), antMatcher("/swagger-ui.html"),
                                 antMatcher("/v3/api-docs/**")).permitAll()
-                        .requestMatchers(antMatcher("/api/pipeline/**"), antMatcher("/api/demo/reset"))
+                        .requestMatchers(antMatcher(HttpMethod.POST, "/api/pipeline/run"))
+                        .hasAuthority(Permission.RUN_PIPELINE.name())
+                        .requestMatchers(antMatcher(HttpMethod.GET, "/api/pipeline/stats"))
+                        .hasAuthority(Permission.VIEW_DATA.name())
+                        .requestMatchers(antMatcher("/api/demo/reset"))
                         .hasRole(Role.ADMIN.name())
                         .requestMatchers(antMatcher(get, "/api/demo/report")).hasAuthority(view)
+                        .requestMatchers(antMatcher(get, "/api/demo/samples")).hasAuthority(view)
+                        .requestMatchers(antMatcher(get, "/api/stats/**")).hasAuthority(view)
                         .requestMatchers(antMatcher("/api/me")).authenticated()
                         .requestMatchers(antMatcher("/api/admin/nlp/**")).hasAuthority(nlp)
                         .requestMatchers(antMatcher("/api/admin/users/**")).hasAuthority(users)

@@ -41,6 +41,7 @@ class ClassifyResponse(BaseModel):
     isThirdParty: bool
     score: float
     decision: str
+    negativeSimilarity: float | None = None
 
 class ExtractResponse(BaseModel):
     fullName: str | None
@@ -71,7 +72,8 @@ def classify(request: TextRequest):
     return ClassifyResponse(
         isThirdParty=result["third_party"],
         score=float(result["positive_similarity"] or 0.0),
-        decision=result["decision"]
+        decision=result["decision"],
+        negativeSimilarity=float(result["negative_similarity"]) if result["negative_similarity"] is not None else None
     )
 
 @app.post("/extract-name", response_model=ExtractResponse)

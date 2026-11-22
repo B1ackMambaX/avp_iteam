@@ -13,10 +13,11 @@
 | Документ | Статус | О чём |
 |---|---|---|
 | [architecture.md](architecture.md) | актуально | Компоненты, конвейер обработки, ключевые решения, API nlp-service — стартовая точка |
-| [database.md](database.md) | актуально | Схема БД: таблицы, статусы, связи, нормализация, индексы, миграции V1–V9 |
+| [database.md](database.md) | актуально | Схема БД: таблицы, статусы, связи, нормализация, индексы, миграции V1–V12 |
 | [mapping.md](mapping.md) | актуально | Модуль маппинга: кандидаты, скоринг, правила решений, REST конвейера |
 | [access-matrix.md](access-matrix.md) | актуально | Матрица прав и ролей READER/EDITOR/ADMIN (из вики) |
-| [api-contract.md](api-contract.md) | актуально¹ | REST-контракт для фронтенда: роли, операции, админка. ¹Разделы 4–5 (списки, очередь разбора, `resolve`) — ТЗ, ещё не реализованы |
+| [api-contract.md](api-contract.md) | актуально | REST-контракт для фронтенда: роли, операции, очередь разбора, `resolve`, дашборд, админка |
+| [vaadin-backend.md](vaadin-backend.md) | актуально | Сервисы и DTO для Vaadin-экранов «Операции» и «Ручной разбор» (BE-1 … BE-4): сигнатуры, правила, ошибки |
 | [benchmarks.md](benchmarks.md) | актуально | Как запускать бенчмарки гипотез А (Java) и Б (Python) |
 
 ### Измерения
@@ -24,6 +25,10 @@
 | Документ | Статус | О чём |
 |---|---|---|
 | [load-testing.md](load-testing.md) | актуально | Нагрузочное тестирование x1–x10, узкие места по стадиям, открытые вопросы |
+| [analysis/perf-db-findings.md](analysis/perf-db-findings.md) | актуально | Диагностика x10: причина деградации — Open Session in View, не БД (930 → 104 с) |
+| [analysis/stats-status-mapping.md](analysis/stats-status-mapping.md) | актуально | Статусы операций и корзины дашборда `/api/stats/summary`, `mapping_source`, замер на 120 000 |
+| [analysis/customer-examples-diagnosis.md](analysis/customer-examples-diagnosis.md) | актуально | Детектор третьего лица на 24 примерах заказчика: правило, гейт, извлечение имени, баги |
+| [analysis/customer-formats-check.md](analysis/customer-formats-check.md) | актуально | Номера договоров и ИНН на 24 текстах заказчика |
 
 ### Исследования NLP (архив)
 

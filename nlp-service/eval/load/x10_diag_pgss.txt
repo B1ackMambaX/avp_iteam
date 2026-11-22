@@ -1,0 +1,31 @@
+ calls  | total_ms | mean_ms |  blks   |                                        q                                         
+--------+----------+---------+---------+----------------------------------------------------------------------------------
+ 541376 |     8979 |    0.02 | 8504500 | INSERT INTO operation_mapping_candidate (operation_id, contract_id, score, match
+ 120000 |     4563 |    0.04 | 4863668 | UPDATE operations SET status = $1, contract_id = $2, mapping_reason = $3, mapped
+   2401 |     4080 |    1.70 | 7201009 | WITH picked AS ( SELECT id FROM operations WHERE status = $2 ORDER BY id LIMIT $
+ 618443 |     3392 |    0.01 | 3710658 | SELECT $2 FROM ONLY "public"."contracts" x WHERE "id" OPERATOR(pg_catalog.=) $1 
+   2400 |     3328 |    1.39 | 3863344 | UPDATE operations SET status = $51, updated_at = now() WHERE id IN ($1, $2, $3, 
+      1 |     2745 | 2745.13 | 3460784 | UPDATE operations SET status = $1, contract_id = $2, mapping_reason = $3, mapped
+  87905 |     2207 |    0.03 | 1126492 | INSERT INTO operation_parse_result ( operation_id, parser, parser_version, is_th
+   2369 |     1052 |    0.44 |  813600 | SELECT id, inn FROM clients WHERE inn IN ($1, $2, $3, $4, $5, $6, $7, $8, $9, $1
+   2401 |     1007 |    0.42 | 2757807 | UPDATE nlp_task t SET status = $3, attempts = t.attempts + $4, locked_until = no
+ 781376 |      998 |    0.00 | 4193570 | SELECT $2 FROM ONLY "public"."operations" x WHERE "id" OPERATOR(pg_catalog.=) $1
+  32095 |      860 |    0.03 |  414019 | INSERT INTO operation_parse_result ( operation_id, parser, parser_version, is_th
+   2069 |      837 |    0.40 |  624838 | WITH hubs AS ( SELECT client_id FROM contract_parties WHERE client_id IN ($1, $2
+   2400 |      535 |    0.22 | 2053737 | UPDATE nlp_task SET status = $51, locked_until = $52, last_error = $53, updated_
+   1000 |      470 |    0.47 |  199912 | SELECT id, contract_number_norm FROM contracts WHERE contract_number_norm IN ($1
+   2400 |      328 |    0.14 |  417830 | select o1_0.id,o1_0.amount,o1_0.amount_rub,o1_0.contract_id,o1_0.created_at,o1_0
+(15 rows)
+
+           relname           | n_live_tup | n_dead_tup | n_tup_ins | n_tup_upd | n_tup_hot_upd | n_tup_del |        last_autovacuum        | autovacuum_count |       last_autoanalyze        | autoanalyze_count 
+-----------------------------+------------+------------+-----------+-----------+---------------+-----------+-------------------------------+------------------+-------------------------------+-------------------
+ nlp_task                    |     120000 |       7800 |    144000 |    288000 |             0 |         0 | 2026-11-22 07:29:00.61093+00  |               10 | 2026-11-22 07:28:00.296907+00 |                12
+ operation_mapping_candidate |     541692 |          0 |    647617 |         0 |             0 |         0 | 2026-11-22 07:22:02.572601+00 |                7 | 2026-11-22 07:27:00.70121+00  |                11
+ operations                  |     159430 |       7700 |    144000 |    576000 |             7 |         0 | 2026-11-22 07:29:02.008926+00 |               10 | 2026-11-22 07:28:02.088213+00 |                13
+(3 rows)
+
+ operations_count | reltuples 
+------------------+-----------
+           120000 |    159430
+(1 row)
+

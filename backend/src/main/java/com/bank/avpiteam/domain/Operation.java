@@ -95,6 +95,11 @@ public class Operation {
     @Column(name = "mapped_at")
     private OffsetDateTime mappedAt;
 
+    // Источник привязки: AUTO (маппинг) или MANUAL (оператор). По mapped_by не различить:
+    // автопривязка пишет туда 'AUTO', а логин пользователя тоже может быть "AUTO"
+    @Column(name = "mapping_source", length = 10)
+    private String mappingSource;
+
     // Почему маппинг принял решение (см. MappingDecider.Reason)
     @Column(name = "mapping_reason", length = 40)
     private String mappingReason;
@@ -120,6 +125,7 @@ public class Operation {
         WAITING_NLP,      // ждёт разбора назначения платежа в очереди nlp_task
         PARSED,           // назначение разобрано, ждёт маппинга
         AUTO_MAPPED,      // успешно привязана автоматически
+        MANUAL_MAPPED,    // договор подтверждён оператором (ручной разбор)
         MANUAL_REQUIRED,  // требует ручной привязки
         AMBIGUOUS,        // несколько кандидатов на договор
         NOT_FOUND         // договор не найден

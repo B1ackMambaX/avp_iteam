@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -27,13 +26,13 @@ class NlpTestServiceTest {
     @BeforeEach
     void setUp() {
         when(provider.current()).thenReturn(new EffectiveNlpSettings(3, 0.5, TRIG, NEG));
-        service = new NlpTestService(provider, new NlpSettingsValidator(), gateway);  // ADAPT: конструктор
+        service = new NlpTestService(provider, new NlpSettingsValidator(), gateway);
     }
 
     @Test
     void usesCurrentSettingsWithoutOverride() {
         when(gateway.classify("text", 0.5, TRIG, NEG))
-                .thenReturn(new NlpAdminGateway.Classification("SEMANTIC", 0.7, false));
+                .thenReturn(new NlpAdminGateway.Classification("SEMANTIC", 0.7, false, null));
         var r = service.test(new NlpTestRequest("text", null, null, null));
         assertThat(r.overridden()).isFalse();
         assertThat(r.settingsVersion()).isEqualTo(3);
@@ -43,7 +42,7 @@ class NlpTestServiceTest {
     @Test
     void overrideIsPassedToGateway() {
         when(gateway.classify("text", 0.9, List.of("фидуциар*"), NEG))
-                .thenReturn(new NlpAdminGateway.Classification("GATED", 0.0, false));
+                .thenReturn(new NlpAdminGateway.Classification("GATED", 0.0, false, null));
         var r = service.test(new NlpTestRequest("text", 0.9, List.of("фидуциар*"), null));
         assertThat(r.overridden()).isTrue();
         assertThat(r.decision()).isEqualTo("GATED");
@@ -52,7 +51,7 @@ class NlpTestServiceTest {
     @Test
     void nameExtractedOnlyForThirdParty() {
         when(gateway.classify(any(), anyDouble(), anyList(), anyList()))
-                .thenReturn(new NlpAdminGateway.Classification("SEMANTIC", 0.4, false));
+                .thenReturn(new NlpAdminGateway.Classification("SEMANTIC", 0.4, false, null));
         var r = service.test(new NlpTestRequest("text", null, null, null));
         assertThat(r.extractedName()).isNull();
         verify(gateway, never()).extractName(any());
@@ -61,10 +60,18 @@ class NlpTestServiceTest {
     @Test
     void nameReturnedForThirdParty() {
         when(gateway.classify(any(), anyDouble(), anyList(), anyList()))
-                .thenReturn(new NlpAdminGateway.Classification("SEMANTIC", 0.9, true));
+                .thenReturn(new NlpAdminGateway.Classification("SEMANTIC", 0.9, true, null));
         when(gateway.extractName("text")).thenReturn("Иванов Иван");
         var r = service.test(new NlpTestRequest("text", null, null, null));
         assertThat(r.extractedName()).isEqualTo("Иванов Иван");
+    }
+
+    @Test
+    void negativeSimilarityPassedThrough() {
+        when(gateway.classify(any(), anyDouble(), anyList(), anyList()))
+                .thenReturn(new NlpAdminGateway.Classification("SEMANTIC", 0.769, false, 0.812));
+        var r = service.test(new NlpTestRequest("text", null, null, null));
+        assertThat(r.negativeSimilarity()).isEqualTo(0.812);
     }
 
     @Test

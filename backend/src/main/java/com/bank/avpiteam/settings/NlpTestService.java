@@ -48,7 +48,7 @@ public class NlpTestService {
                     draft.triggerWords(), draft.negationWords());
             String name = c.thirdParty() ? gateway.extractName(req.text()) : null;
             return new NlpTestResponse(cur.version(), overridden, draft.threshold().doubleValue(),
-                    c.decision(), c.score(), c.thirdParty(), name);
+                    c.decision(), c.score(), c.thirdParty(), name, c.negativeSimilarity());
         } catch (RestClientException e) {
             throw new NlpAdminUnavailable("NLP service is unavailable", e);
         }
