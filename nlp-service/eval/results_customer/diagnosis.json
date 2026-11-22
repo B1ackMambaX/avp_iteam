@@ -1,0 +1,2349 @@
+{
+ "settings": {
+  "version": 1,
+  "threshold": 0.5,
+  "triggerWords": [
+   "треть*",
+   "лиц*",
+   "интерес*",
+   "счет*",
+   "правопреемник*",
+   "довереннос*",
+   "цессионар*",
+   "контрагент*",
+   "польз*",
+   "выгодоприобретател*"
+  ],
+  "negationWords": [
+   "не",
+   "нет",
+   "отсутств*",
+   "без"
+  ],
+  "changedAt": "2026-11-22T07:08:14.493394Z",
+  "changedBy": "migration",
+  "comment": null
+ },
+ "rows": [
+  {
+   "id": 1,
+   "expected": true,
+   "beneficiary": "ООО «СтройЭлектроМонтажСервис»",
+   "kind": "org",
+   "contract_type": "Платеж за третье лицо",
+   "text": "Оплата за третье лицо ООО «СтройЭлектроМонтажСервис» ИНН 7712345678 по счету № 123 от 18.10.2026 за аренду спецтехники по договору № 23/А от 05.03.2026. В том числе НДС 22%, 12 200,00 руб.",
+   "api": {
+    "settingsVersion": 1,
+    "overridden": false,
+    "threshold": 0.5,
+    "decision": "SEMANTIC",
+    "score": 0.769,
+    "thirdParty": false,
+    "extractedName": null,
+    "negativeSimilarity": 0.833
+   },
+   "rule_third_party": false,
+   "api_matches_rule": true,
+   "gate": {
+    "has_trigger": true,
+    "matched_words": [
+     "треть*",
+     "лиц*",
+     "счет*"
+    ],
+    "checked": [
+     {
+      "word": "треть*",
+      "matched": [
+       "третье"
+      ],
+      "context": [
+       "оплата за третье лицо ооо «стройэлек"
+      ]
+     },
+     {
+      "word": "лиц*",
+      "matched": [
+       "лицо"
+      ],
+      "context": [
+       "оплата за третье лицо ооо «стройэлектромо"
+      ]
+     },
+     {
+      "word": "интерес*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "счет*",
+      "matched": [
+       "счету"
+      ],
+      "context": [
+       "» инн 7712345678 по счету № 123 от 18.10.2026"
+      ]
+     },
+     {
+      "word": "правопреемник*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "довереннос*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "цессионар*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "контрагент*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "польз*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "выгодоприобретател*",
+      "matched": [],
+      "context": []
+     }
+    ],
+    "za_fragments": [
+     {
+      "match": "за",
+      "pos": 7,
+      "context": "оплата за третье лицо ооо «ст"
+     },
+     {
+      "match": "за",
+      "pos": 97,
+      "context": "№ 123 от 18.10.2026 за аренду спецтехники "
+     }
+    ]
+   },
+   "extract_name_direct": null,
+   "regex_baseline": [
+    {
+     "match": "за",
+     "pos": 7,
+     "context": "Оплата за третье лицо ООО «Ст"
+    },
+    {
+     "match": "за",
+     "pos": 97,
+     "context": "№ 123 от 18.10.2026 за аренду спецтехники "
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "expected": false,
+   "beneficiary": "",
+   "kind": "none",
+   "contract_type": "Договор комиссии",
+   "text": "Оплата по договору комиссии № К-1289/45 от 20.04.2026 за реализованный товар по отчету комиссионера № 12 от 30.10.2026. Сумма 128 256-00, НДС не облагается",
+   "api": {
+    "settingsVersion": 1,
+    "overridden": false,
+    "threshold": 0.5,
+    "decision": "GATED",
+    "score": 0.0,
+    "thirdParty": false,
+    "extractedName": null,
+    "negativeSimilarity": null
+   },
+   "rule_third_party": false,
+   "api_matches_rule": true,
+   "gate": {
+    "has_trigger": false,
+    "matched_words": [],
+    "checked": [
+     {
+      "word": "треть*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "лиц*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "интерес*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "счет*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "правопреемник*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "довереннос*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "цессионар*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "контрагент*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "польз*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "выгодоприобретател*",
+      "matched": [],
+      "context": []
+     }
+    ],
+    "za_fragments": [
+     {
+      "match": "за",
+      "pos": 54,
+      "context": "89/45 от 20.04.2026 за реализованный товар"
+     }
+    ]
+   },
+   "extract_name_direct": null,
+   "regex_baseline": [
+    {
+     "match": "за",
+     "pos": 54,
+     "context": "89/45 от 20.04.2026 за реализованный товар"
+    }
+   ]
+  },
+  {
+   "id": 3,
+   "expected": true,
+   "beneficiary": "Соколов Артем Дмитриевич",
+   "kind": "person",
+   "contract_type": "Платеж за третье лицо",
+   "text": "Оплата за обучение Соколова Артема Дмитриевича, 7 «Ъ» класс, по договору № 1234/26 от 01.09.2026 за ноябрь 2026 г. Без НДС",
+   "api": {
+    "settingsVersion": 1,
+    "overridden": false,
+    "threshold": 0.5,
+    "decision": "GATED",
+    "score": 0.0,
+    "thirdParty": false,
+    "extractedName": null,
+    "negativeSimilarity": null
+   },
+   "rule_third_party": false,
+   "api_matches_rule": true,
+   "gate": {
+    "has_trigger": false,
+    "matched_words": [],
+    "checked": [
+     {
+      "word": "треть*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "лиц*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "интерес*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "счет*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "правопреемник*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "довереннос*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "цессионар*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "контрагент*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "польз*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "выгодоприобретател*",
+      "matched": [],
+      "context": []
+     }
+    ],
+    "za_fragments": [
+     {
+      "match": "за",
+      "pos": 7,
+      "context": "оплата за обучение соколова а"
+     },
+     {
+      "match": "за",
+      "pos": 97,
+      "context": "34/26 от 01.09.2026 за ноябрь 2026 г. без "
+     }
+    ]
+   },
+   "extract_name_direct": "Соколов Артём Дмитриевич",
+   "regex_baseline": [
+    {
+     "match": "за",
+     "pos": 7,
+     "context": "Оплата за обучение Соколова А"
+    },
+    {
+     "match": "за",
+     "pos": 97,
+     "context": "34/26 от 01.09.2026 за ноябрь 2026 г. Без "
+    }
+   ]
+  },
+  {
+   "id": 4,
+   "expected": false,
+   "beneficiary": "",
+   "kind": "none",
+   "contract_type": "Агентский договор",
+   "text": "Перечисление выручки принципалу по агентскому договору № 123/1 от 17.12.2021 за период 03.10.2022–24.10.2022. Сумма 2 160 000-00, в т.ч. НДС (22%) 333 556-49",
+   "api": {
+    "settingsVersion": 1,
+    "overridden": false,
+    "threshold": 0.5,
+    "decision": "GATED",
+    "score": 0.0,
+    "thirdParty": false,
+    "extractedName": null,
+    "negativeSimilarity": null
+   },
+   "rule_third_party": false,
+   "api_matches_rule": true,
+   "gate": {
+    "has_trigger": false,
+    "matched_words": [],
+    "checked": [
+     {
+      "word": "треть*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "лиц*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "интерес*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "счет*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "правопреемник*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "довереннос*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "цессионар*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "контрагент*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "польз*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "выгодоприобретател*",
+      "matched": [],
+      "context": []
+     }
+    ],
+    "za_fragments": [
+     {
+      "match": "за",
+      "pos": 77,
+      "context": "123/1 от 17.12.2021 за период 03.10.2022–2"
+     }
+    ]
+   },
+   "extract_name_direct": null,
+   "regex_baseline": [
+    {
+     "match": "за",
+     "pos": 77,
+     "context": "123/1 от 17.12.2021 за период 03.10.2022–2"
+    }
+   ]
+  },
+  {
+   "id": 5,
+   "expected": true,
+   "beneficiary": "Чернова Ксения Игоревна",
+   "kind": "person",
+   "contract_type": "Платеж за третье лицо",
+   "text": "Оплата по счету № 1234 от 15.07.2024 за туристические услуги: тур в ОАЭ, Дубай, 7 ночей, турист — Чернова Ксения Игоревна. В том числе НДС 5%, 22 654,00 руб.",
+   "api": {
+    "settingsVersion": 1,
+    "overridden": false,
+    "threshold": 0.5,
+    "decision": "SEMANTIC",
+    "score": 0.69,
+    "thirdParty": false,
+    "extractedName": null,
+    "negativeSimilarity": 0.79
+   },
+   "rule_third_party": false,
+   "api_matches_rule": true,
+   "gate": {
+    "has_trigger": true,
+    "matched_words": [
+     "счет*"
+    ],
+    "checked": [
+     {
+      "word": "треть*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "лиц*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "интерес*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "счет*",
+      "matched": [
+       "счету"
+      ],
+      "context": [
+       "оплата по счету № 1234 от 15.07.202"
+      ]
+     },
+     {
+      "word": "правопреемник*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "довереннос*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "цессионар*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "контрагент*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "польз*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "выгодоприобретател*",
+      "matched": [],
+      "context": []
+     }
+    ],
+    "za_fragments": [
+     {
+      "match": "за",
+      "pos": 37,
+      "context": " 1234 от 15.07.2024 за туристические услуг"
+     }
+    ]
+   },
+   "extract_name_direct": "Чернова Ксения Игоревна",
+   "regex_baseline": [
+    {
+     "match": "за",
+     "pos": 37,
+     "context": " 1234 от 15.07.2024 за туристические услуг"
+    }
+   ]
+  },
+  {
+   "id": 6,
+   "expected": false,
+   "beneficiary": "",
+   "kind": "none",
+   "contract_type": "Гарантийное письмо",
+   "text": "Обеспечительный депозит по агентскому соглашению № 987654/1 от 11.05.2013. Сумма 100 000 000-00, без налога (НДС)",
+   "api": {
+    "settingsVersion": 1,
+    "overridden": false,
+    "threshold": 0.5,
+    "decision": "GATED",
+    "score": 0.0,
+    "thirdParty": false,
+    "extractedName": null,
+    "negativeSimilarity": null
+   },
+   "rule_third_party": false,
+   "api_matches_rule": true,
+   "gate": {
+    "has_trigger": false,
+    "matched_words": [],
+    "checked": [
+     {
+      "word": "треть*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "лиц*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "интерес*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "счет*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "правопреемник*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "довереннос*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "цессионар*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "контрагент*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "польз*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "выгодоприобретател*",
+      "matched": [],
+      "context": []
+     }
+    ],
+    "za_fragments": []
+   },
+   "extract_name_direct": null,
+   "regex_baseline": []
+  },
+  {
+   "id": 7,
+   "expected": true,
+   "beneficiary": "ООО «Авто-Регион»",
+   "kind": "org",
+   "contract_type": "Платеж за третье лицо",
+   "text": "Лизинговый платеж за ноябрь 2026 г. по договору лизинга № 69567-ТТТ-24-НО-Л от 17.09.2022 за ООО «Авто-Регион» ИНН 3278451234. В т.ч. НДС 22%, 59 508,20 руб.",
+   "api": {
+    "settingsVersion": 1,
+    "overridden": false,
+    "threshold": 0.5,
+    "decision": "GATED",
+    "score": 0.0,
+    "thirdParty": false,
+    "extractedName": null,
+    "negativeSimilarity": null
+   },
+   "rule_third_party": false,
+   "api_matches_rule": true,
+   "gate": {
+    "has_trigger": false,
+    "matched_words": [],
+    "checked": [
+     {
+      "word": "треть*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "лиц*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "интерес*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "счет*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "правопреемник*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "довереннос*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "цессионар*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "контрагент*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "польз*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "выгодоприобретател*",
+      "matched": [],
+      "context": []
+     }
+    ],
+    "za_fragments": [
+     {
+      "match": "за",
+      "pos": 18,
+      "context": "лизинговый платеж за ноябрь 2026 г. по д"
+     },
+     {
+      "match": "за",
+      "pos": 90,
+      "context": "-но-л от 17.09.2022 за ооо «авто-регион» и"
+     }
+    ]
+   },
+   "extract_name_direct": null,
+   "regex_baseline": [
+    {
+     "match": "за",
+     "pos": 18,
+     "context": "Лизинговый платеж за ноябрь 2026 г. по д"
+    },
+    {
+     "match": "за",
+     "pos": 90,
+     "context": "-НО-Л от 17.09.2022 за ООО «Авто-Регион» И"
+    }
+   ]
+  },
+  {
+   "id": 8,
+   "expected": false,
+   "beneficiary": "",
+   "kind": "none",
+   "contract_type": "Агентский договор",
+   "text": "Оплата страховых взносов по отчету агента 06/25 ОСАГО. Агентский договор № 12345/КРЫУ/2019 от 18.02.2019. Сумма 567 890-12, без налога (НДС)",
+   "api": {
+    "settingsVersion": 1,
+    "overridden": false,
+    "threshold": 0.5,
+    "decision": "GATED",
+    "score": 0.0,
+    "thirdParty": false,
+    "extractedName": null,
+    "negativeSimilarity": null
+   },
+   "rule_third_party": false,
+   "api_matches_rule": true,
+   "gate": {
+    "has_trigger": false,
+    "matched_words": [],
+    "checked": [
+     {
+      "word": "треть*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "лиц*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "интерес*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "счет*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "правопреемник*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "довереннос*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "цессионар*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "контрагент*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "польз*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "выгодоприобретател*",
+      "matched": [],
+      "context": []
+     }
+    ],
+    "za_fragments": []
+   },
+   "extract_name_direct": null,
+   "regex_baseline": []
+  },
+  {
+   "id": 9,
+   "expected": true,
+   "beneficiary": "Громова Любовь Викторовна (адвокат)",
+   "kind": "person",
+   "contract_type": "Платеж за третье лицо",
+   "text": "Гонорар адвоката Громовой Любови Викторовны согласно реестру № ТУ-154 за 01.02.2022. Перевод по зарплатному проекту. НДС не облагается",
+   "api": {
+    "settingsVersion": 1,
+    "overridden": false,
+    "threshold": 0.5,
+    "decision": "GATED",
+    "score": 0.0,
+    "thirdParty": false,
+    "extractedName": null,
+    "negativeSimilarity": null
+   },
+   "rule_third_party": false,
+   "api_matches_rule": true,
+   "gate": {
+    "has_trigger": false,
+    "matched_words": [],
+    "checked": [
+     {
+      "word": "треть*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "лиц*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "интерес*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "счет*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "правопреемник*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "довереннос*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "цессионар*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "контрагент*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "польз*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "выгодоприобретател*",
+      "matched": [],
+      "context": []
+     }
+    ],
+    "za_fragments": [
+     {
+      "match": "за",
+      "pos": 70,
+      "context": "но реестру № ту-154 за 01.02.2022. перевод"
+     }
+    ]
+   },
+   "extract_name_direct": "Громова Любовь Викторовна",
+   "regex_baseline": [
+    {
+     "match": "за",
+     "pos": 70,
+     "context": "но реестру № ТУ-154 за 01.02.2022. Перевод"
+    }
+   ]
+  },
+  {
+   "id": 10,
+   "expected": true,
+   "beneficiary": "ООО «ТехноПром»",
+   "kind": "org",
+   "contract_type": "Платеж за третье лицо",
+   "text": "ЕНП. Налог на прибыль и пени по уточненной декларации за 2029 г. ООО «ТехноПром» ИНН 5616873539. Платеж за третье лицо",
+   "api": {
+    "settingsVersion": 1,
+    "overridden": false,
+    "threshold": 0.5,
+    "decision": "SEMANTIC",
+    "score": 0.65,
+    "thirdParty": false,
+    "extractedName": null,
+    "negativeSimilarity": 0.748
+   },
+   "rule_third_party": false,
+   "api_matches_rule": true,
+   "gate": {
+    "has_trigger": true,
+    "matched_words": [
+     "треть*",
+     "лиц*"
+    ],
+    "checked": [
+     {
+      "word": "треть*",
+      "matched": [
+       "третье"
+      ],
+      "context": [
+       "16873539. платеж за третье лицо"
+      ]
+     },
+     {
+      "word": "лиц*",
+      "matched": [
+       "лицо"
+      ],
+      "context": [
+       "9. платеж за третье лицо"
+      ]
+     },
+     {
+      "word": "интерес*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "счет*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "правопреемник*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "довереннос*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "цессионар*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "контрагент*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "польз*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "выгодоприобретател*",
+      "matched": [],
+      "context": []
+     }
+    ],
+    "za_fragments": [
+     {
+      "match": "за",
+      "pos": 54,
+      "context": "очненной декларации за 2029 г. ооо «техноп"
+     },
+     {
+      "match": "за",
+      "pos": 104,
+      "context": " 5616873539. платеж за третье лицо"
+     }
+    ]
+   },
+   "extract_name_direct": null,
+   "regex_baseline": [
+    {
+     "match": "за",
+     "pos": 54,
+     "context": "очненной декларации за 2029 г. ООО «ТехноП"
+    },
+    {
+     "match": "за",
+     "pos": 104,
+     "context": " 5616873539. Платеж за третье лицо"
+    }
+   ]
+  },
+  {
+   "id": 11,
+   "expected": false,
+   "beneficiary": "",
+   "kind": "none",
+   "contract_type": "Агентский договор",
+   "text": "Оплата по счету № FDK19032FK от 12.12.2024 за услугу проживания и агентский сбор. Сумма 23 456-00, в т.ч. НДС 56-78. Для ООО «РитейлСеть», филиал Уральский",
+   "api": {
+    "settingsVersion": 1,
+    "overridden": false,
+    "threshold": 0.5,
+    "decision": "SEMANTIC",
+    "score": 0.709,
+    "thirdParty": false,
+    "extractedName": null,
+    "negativeSimilarity": 0.81
+   },
+   "rule_third_party": false,
+   "api_matches_rule": true,
+   "gate": {
+    "has_trigger": true,
+    "matched_words": [
+     "счет*"
+    ],
+    "checked": [
+     {
+      "word": "треть*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "лиц*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "интерес*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "счет*",
+      "matched": [
+       "счету"
+      ],
+      "context": [
+       "оплата по счету № fdk19032fk от 12."
+      ]
+     },
+     {
+      "word": "правопреемник*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "довереннос*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "цессионар*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "контрагент*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "польз*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "выгодоприобретател*",
+      "matched": [],
+      "context": []
+     }
+    ],
+    "za_fragments": [
+     {
+      "match": "за",
+      "pos": 43,
+      "context": "032fk от 12.12.2024 за услугу проживания и"
+     }
+    ]
+   },
+   "extract_name_direct": null,
+   "regex_baseline": [
+    {
+     "match": "за",
+     "pos": 43,
+     "context": "032FK от 12.12.2024 за услугу проживания и"
+    }
+   ]
+  },
+  {
+   "id": 12,
+   "expected": true,
+   "beneficiary": "Кузнецова Полина Андреевна",
+   "kind": "person",
+   "contract_type": "Платеж за третье лицо",
+   "text": "Оплата за организацию образовательного процесса за Кузнецову Полину Андреевну, 5 класс, по договору № 896/85 от 20.12.2012 за ИЮЛЬ 2016 г. Без НДС",
+   "api": {
+    "settingsVersion": 1,
+    "overridden": false,
+    "threshold": 0.5,
+    "decision": "GATED",
+    "score": 0.0,
+    "thirdParty": false,
+    "extractedName": null,
+    "negativeSimilarity": null
+   },
+   "rule_third_party": false,
+   "api_matches_rule": true,
+   "gate": {
+    "has_trigger": false,
+    "matched_words": [],
+    "checked": [
+     {
+      "word": "треть*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "лиц*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "интерес*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "счет*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "правопреемник*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "довереннос*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "цессионар*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "контрагент*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "польз*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "выгодоприобретател*",
+      "matched": [],
+      "context": []
+     }
+    ],
+    "za_fragments": [
+     {
+      "match": "за",
+      "pos": 7,
+      "context": "оплата за организацию образов"
+     },
+     {
+      "match": "за",
+      "pos": 48,
+      "context": "вательного процесса за кузнецову полину ан"
+     },
+     {
+      "match": "за",
+      "pos": 123,
+      "context": "96/85 от 20.12.2012 за июль 2016 г. без нд"
+     }
+    ]
+   },
+   "extract_name_direct": "Кузнецова Полина Андреевна",
+   "regex_baseline": [
+    {
+     "match": "за",
+     "pos": 7,
+     "context": "Оплата за организацию образов"
+    },
+    {
+     "match": "за",
+     "pos": 48,
+     "context": "вательного процесса за Кузнецову Полину Ан"
+    },
+    {
+     "match": "за",
+     "pos": 123,
+     "context": "96/85 от 20.12.2012 за ИЮЛЬ 2016 г. Без НД"
+    }
+   ]
+  },
+  {
+   "id": 13,
+   "expected": false,
+   "beneficiary": "",
+   "kind": "none",
+   "contract_type": "Агентский договор",
+   "text": "Перечисление денежных средств агенту ИП Пряникова Зульфия Ароновка ИНН 879581231233 по Соглашению об использовании электронного сервиса для оплаты принципалам. НДС не облагается",
+   "api": {
+    "settingsVersion": 1,
+    "overridden": false,
+    "threshold": 0.5,
+    "decision": "GATED",
+    "score": 0.0,
+    "thirdParty": false,
+    "extractedName": null,
+    "negativeSimilarity": null
+   },
+   "rule_third_party": false,
+   "api_matches_rule": true,
+   "gate": {
+    "has_trigger": false,
+    "matched_words": [],
+    "checked": [
+     {
+      "word": "треть*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "лиц*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "интерес*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "счет*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "правопреемник*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "довереннос*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "цессионар*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "контрагент*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "польз*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "выгодоприобретател*",
+      "matched": [],
+      "context": []
+     }
+    ],
+    "za_fragments": []
+   },
+   "extract_name_direct": null,
+   "regex_baseline": []
+  },
+  {
+   "id": 14,
+   "expected": true,
+   "beneficiary": "ИП Коваль Е.Б.",
+   "kind": "ip",
+   "contract_type": "Платеж за третье лицо",
+   "text": "Оплата по счету № 34 от 12.05.2019 по письму за ИП Коваль Е Б Сумма 567000.00 рублекй, в т.ч. НДС (22%) 24032.09 рублей",
+   "api": {
+    "settingsVersion": 1,
+    "overridden": false,
+    "threshold": 0.5,
+    "decision": "SEMANTIC",
+    "score": 0.739,
+    "thirdParty": false,
+    "extractedName": null,
+    "negativeSimilarity": 0.793
+   },
+   "rule_third_party": false,
+   "api_matches_rule": true,
+   "gate": {
+    "has_trigger": true,
+    "matched_words": [
+     "счет*"
+    ],
+    "checked": [
+     {
+      "word": "треть*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "лиц*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "интерес*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "счет*",
+      "matched": [
+       "счету"
+      ],
+      "context": [
+       "оплата по счету № 34 от 12.05.2019 "
+      ]
+     },
+     {
+      "word": "правопреемник*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "довереннос*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "цессионар*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "контрагент*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "польз*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "выгодоприобретател*",
+      "matched": [],
+      "context": []
+     }
+    ],
+    "za_fragments": [
+     {
+      "match": "за",
+      "pos": 45,
+      "context": "2.05.2019 по письму за ип коваль е б сумма"
+     }
+    ]
+   },
+   "extract_name_direct": null,
+   "regex_baseline": [
+    {
+     "match": "за",
+     "pos": 45,
+     "context": "2.05.2019 по письму за ИП Коваль Е Б Сумма"
+    }
+   ]
+  },
+  {
+   "id": 15,
+   "expected": false,
+   "beneficiary": "",
+   "kind": "none",
+   "contract_type": "Агентский договор",
+   "text": "Оплата по агентскому договору № НШ-53 от 21.03.2020 за оказание услуг по поиску покупателей. НДС не облагается",
+   "api": {
+    "settingsVersion": 1,
+    "overridden": false,
+    "threshold": 0.5,
+    "decision": "GATED",
+    "score": 0.0,
+    "thirdParty": false,
+    "extractedName": null,
+    "negativeSimilarity": null
+   },
+   "rule_third_party": false,
+   "api_matches_rule": true,
+   "gate": {
+    "has_trigger": false,
+    "matched_words": [],
+    "checked": [
+     {
+      "word": "треть*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "лиц*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "интерес*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "счет*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "правопреемник*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "довереннос*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "цессионар*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "контрагент*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "польз*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "выгодоприобретател*",
+      "matched": [],
+      "context": []
+     }
+    ],
+    "za_fragments": [
+     {
+      "match": "за",
+      "pos": 52,
+      "context": "нш-53 от 21.03.2020 за оказание услуг по п"
+     }
+    ]
+   },
+   "extract_name_direct": null,
+   "regex_baseline": [
+    {
+     "match": "за",
+     "pos": 52,
+     "context": "НШ-53 от 21.03.2020 за оказание услуг по п"
+    }
+   ]
+  },
+  {
+   "id": 16,
+   "expected": true,
+   "beneficiary": "ООО «АУ Заблудился»",
+   "kind": "org",
+   "contract_type": "Платеж за третье лицо",
+   "text": "Оплата за ООО «АУ Заблудился» ИНН 9834567543 договор № 567 от десятого августа деветысячи двадцатого года, счет № 654 от десятого августа деветысячи двадцатого года, за выполнение работы согласно распределительному письму. Сумма 123000,00, в НДС (22%) 85 295 р.",
+   "api": {
+    "settingsVersion": 1,
+    "overridden": false,
+    "threshold": 0.5,
+    "decision": "SEMANTIC",
+    "score": 0.674,
+    "thirdParty": false,
+    "extractedName": null,
+    "negativeSimilarity": 0.708
+   },
+   "rule_third_party": false,
+   "api_matches_rule": true,
+   "gate": {
+    "has_trigger": true,
+    "matched_words": [
+     "счет*"
+    ],
+    "checked": [
+     {
+      "word": "треть*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "лиц*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "интерес*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "счет*",
+      "matched": [
+       "счет"
+      ],
+      "context": [
+       "чи двадцатого года, счет № 654 от десятого а"
+      ]
+     },
+     {
+      "word": "правопреемник*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "довереннос*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "цессионар*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "контрагент*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "польз*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "выгодоприобретател*",
+      "matched": [],
+      "context": []
+     }
+    ],
+    "za_fragments": [
+     {
+      "match": "за",
+      "pos": 7,
+      "context": "оплата за ооо «ау заблудился»"
+     },
+     {
+      "match": "за",
+      "pos": 166,
+      "context": "чи двадцатого года, за выполнение работы с"
+     }
+    ]
+   },
+   "extract_name_direct": null,
+   "regex_baseline": [
+    {
+     "match": "за",
+     "pos": 7,
+     "context": "Оплата за ООО «АУ Заблудился»"
+    },
+    {
+     "match": "за",
+     "pos": 166,
+     "context": "чи двадцатого года, за выполнение работы с"
+    }
+   ]
+  },
+  {
+   "id": 17,
+   "expected": true,
+   "beneficiary": "ООО Кошки против собак",
+   "kind": "org",
+   "contract_type": "",
+   "text": "Оплата по договору аренды № 4839-65 от 05.07.2014 за ноябрь 2059 г. за ООО Кошки против собак. НДС не облагается",
+   "api": {
+    "settingsVersion": 1,
+    "overridden": false,
+    "threshold": 0.5,
+    "decision": "GATED",
+    "score": 0.0,
+    "thirdParty": false,
+    "extractedName": null,
+    "negativeSimilarity": null
+   },
+   "rule_third_party": false,
+   "api_matches_rule": true,
+   "gate": {
+    "has_trigger": false,
+    "matched_words": [],
+    "checked": [
+     {
+      "word": "треть*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "лиц*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "интерес*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "счет*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "правопреемник*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "довереннос*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "цессионар*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "контрагент*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "польз*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "выгодоприобретател*",
+      "matched": [],
+      "context": []
+     }
+    ],
+    "za_fragments": [
+     {
+      "match": "за",
+      "pos": 50,
+      "context": "39-65 от 05.07.2014 за ноябрь 2059 г. за о"
+     },
+     {
+      "match": "за",
+      "pos": 68,
+      "context": "4 за ноябрь 2059 г. за ооо кошки против со"
+     }
+    ]
+   },
+   "extract_name_direct": null,
+   "regex_baseline": [
+    {
+     "match": "за",
+     "pos": 50,
+     "context": "39-65 от 05.07.2014 за ноябрь 2059 г. за О"
+    },
+    {
+     "match": "за",
+     "pos": 68,
+     "context": "4 за ноябрь 2059 г. за ООО Кошки против со"
+    }
+   ]
+  },
+  {
+   "id": 18,
+   "expected": false,
+   "beneficiary": "",
+   "kind": "none",
+   "contract_type": "Договор комиссии",
+   "text": "Оплата по счету № НЕК-567 от 3.9.26. Отчет комиссионера о продажах №НЕ-456. В том числе НДС 5%, 1 571,43 руб.",
+   "api": {
+    "settingsVersion": 1,
+    "overridden": false,
+    "threshold": 0.5,
+    "decision": "SEMANTIC",
+    "score": 0.692,
+    "thirdParty": false,
+    "extractedName": null,
+    "negativeSimilarity": 0.744
+   },
+   "rule_third_party": false,
+   "api_matches_rule": true,
+   "gate": {
+    "has_trigger": true,
+    "matched_words": [
+     "счет*"
+    ],
+    "checked": [
+     {
+      "word": "треть*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "лиц*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "интерес*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "счет*",
+      "matched": [
+       "счету"
+      ],
+      "context": [
+       "оплата по счету № нек-567 от 3.9.26"
+      ]
+     },
+     {
+      "word": "правопреемник*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "довереннос*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "цессионар*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "контрагент*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "польз*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "выгодоприобретател*",
+      "matched": [],
+      "context": []
+     }
+    ],
+    "za_fragments": []
+   },
+   "extract_name_direct": null,
+   "regex_baseline": []
+  },
+  {
+   "id": 19,
+   "expected": true,
+   "beneficiary": "ИП Гоглева Евдокия Зековна",
+   "kind": "ip",
+   "contract_type": "Платеж за третье лицо",
+   "text": "Оплата задолженности по просроченным процентам по кредитному договору № RR563DG5 с ИП Гоглевой Евдокией Зековной",
+   "api": {
+    "settingsVersion": 1,
+    "overridden": false,
+    "threshold": 0.5,
+    "decision": "GATED",
+    "score": 0.0,
+    "thirdParty": false,
+    "extractedName": null,
+    "negativeSimilarity": null
+   },
+   "rule_third_party": false,
+   "api_matches_rule": true,
+   "gate": {
+    "has_trigger": false,
+    "matched_words": [],
+    "checked": [
+     {
+      "word": "треть*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "лиц*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "интерес*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "счет*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "правопреемник*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "довереннос*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "цессионар*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "контрагент*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "польз*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "выгодоприобретател*",
+      "matched": [],
+      "context": []
+     }
+    ],
+    "za_fragments": []
+   },
+   "extract_name_direct": "Гоглева Евдокия Зековна",
+   "regex_baseline": []
+  },
+  {
+   "id": 20,
+   "expected": false,
+   "beneficiary": "",
+   "kind": "none",
+   "contract_type": "Агентский договор",
+   "text": "Оплата по договору поставки №65/47/52 от 09.07.2017 за песок в пользу ООО «Глубина 3000» через агента ООО «Металл» по агентскому договору № 10/2014 от 16.04.2018. В том числе НДС 22%, 18032 рублей 79 копеек",
+   "api": {
+    "settingsVersion": 1,
+    "overridden": false,
+    "threshold": 0.5,
+    "decision": "SEMANTIC",
+    "score": 0.819,
+    "thirdParty": true,
+    "extractedName": null,
+    "negativeSimilarity": 0.773
+   },
+   "rule_third_party": true,
+   "api_matches_rule": true,
+   "gate": {
+    "has_trigger": true,
+    "matched_words": [
+     "польз*"
+    ],
+    "checked": [
+     {
+      "word": "треть*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "лиц*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "интерес*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "счет*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "правопреемник*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "довереннос*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "цессионар*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "контрагент*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "польз*",
+      "matched": [
+       "пользу"
+      ],
+      "context": [
+       ".07.2017 за песок в пользу ооо «глубина 3000» "
+      ]
+     },
+     {
+      "word": "выгодоприобретател*",
+      "matched": [],
+      "context": []
+     }
+    ],
+    "za_fragments": [
+     {
+      "match": "за",
+      "pos": 52,
+      "context": "47/52 от 09.07.2017 за песок в пользу ооо "
+     }
+    ]
+   },
+   "extract_name_direct": null,
+   "regex_baseline": [
+    {
+     "match": "за",
+     "pos": 52,
+     "context": "47/52 от 09.07.2017 за песок в пользу ООО "
+    },
+    {
+     "match": "в пользу",
+     "pos": 61,
+     "context": "09.07.2017 за песок в пользу ООО «Глубина 3000» "
+    }
+   ]
+  },
+  {
+   "id": 21,
+   "expected": false,
+   "beneficiary": "",
+   "kind": "none",
+   "contract_type": "Договор комиссии",
+   "text": "Оплата по счету № ИВ-5332 от 10.02.2019 за авансовый платеж по договору комиссии на покупку оборудования. НДС не облагается",
+   "api": {
+    "settingsVersion": 1,
+    "overridden": false,
+    "threshold": 0.5,
+    "decision": "SEMANTIC",
+    "score": 0.747,
+    "thirdParty": false,
+    "extractedName": null,
+    "negativeSimilarity": 0.789
+   },
+   "rule_third_party": false,
+   "api_matches_rule": true,
+   "gate": {
+    "has_trigger": true,
+    "matched_words": [
+     "счет*"
+    ],
+    "checked": [
+     {
+      "word": "треть*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "лиц*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "интерес*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "счет*",
+      "matched": [
+       "счету"
+      ],
+      "context": [
+       "оплата по счету № ив-5332 от 10.02."
+      ]
+     },
+     {
+      "word": "правопреемник*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "довереннос*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "цессионар*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "контрагент*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "польз*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "выгодоприобретател*",
+      "matched": [],
+      "context": []
+     }
+    ],
+    "za_fragments": [
+     {
+      "match": "за",
+      "pos": 40,
+      "context": "-5332 от 10.02.2019 за авансовый платеж по"
+     }
+    ]
+   },
+   "extract_name_direct": null,
+   "regex_baseline": [
+    {
+     "match": "за",
+     "pos": 40,
+     "context": "-5332 от 10.02.2019 за авансовый платеж по"
+    }
+   ]
+  },
+  {
+   "id": 22,
+   "expected": true,
+   "beneficiary": "ООО «Группа Здоровых Кошек»",
+   "kind": "org",
+   "contract_type": "Платеж за третье лицо",
+   "text": "Оплата по договору страхования 7656Й/956/46587782/21 по счету от 12.10.2021 (за ООО «Группа Здоровых Кошек»). НДС не облагается",
+   "api": {
+    "settingsVersion": 1,
+    "overridden": false,
+    "threshold": 0.5,
+    "decision": "SEMANTIC",
+    "score": 0.75,
+    "thirdParty": true,
+    "extractedName": null,
+    "negativeSimilarity": 0.742
+   },
+   "rule_third_party": true,
+   "api_matches_rule": true,
+   "gate": {
+    "has_trigger": true,
+    "matched_words": [
+     "счет*"
+    ],
+    "checked": [
+     {
+      "word": "треть*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "лиц*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "интерес*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "счет*",
+      "matched": [
+       "счету"
+      ],
+      "context": [
+       "/956/46587782/21 по счету от 12.10.2021 (за о"
+      ]
+     },
+     {
+      "word": "правопреемник*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "довереннос*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "цессионар*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "контрагент*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "польз*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "выгодоприобретател*",
+      "matched": [],
+      "context": []
+     }
+    ],
+    "za_fragments": [
+     {
+      "match": "за",
+      "pos": 77,
+      "context": "чету от 12.10.2021 (за ооо «группа здоровы"
+     }
+    ]
+   },
+   "extract_name_direct": null,
+   "regex_baseline": [
+    {
+     "match": "за",
+     "pos": 77,
+     "context": "чету от 12.10.2021 (за ООО «Группа Здоровы"
+    }
+   ]
+  },
+  {
+   "id": 23,
+   "expected": true,
+   "beneficiary": "ООО \"Улица ЗА\"",
+   "kind": "org",
+   "contract_type": "Платеж за третье лицо",
+   "text": "Оплата по счету № 6870 от 07.08.2015. Аренда нежилых помещений по договору аренды № 4886А2 от 12.01.2012 за март 2021 г. (Оплата за ООО Улица ЗА). В том числе НДС 5%, 1387.30 рублей",
+   "api": {
+    "settingsVersion": 1,
+    "overridden": false,
+    "threshold": 0.5,
+    "decision": "SEMANTIC",
+    "score": 0.744,
+    "thirdParty": false,
+    "extractedName": null,
+    "negativeSimilarity": 0.804
+   },
+   "rule_third_party": false,
+   "api_matches_rule": true,
+   "gate": {
+    "has_trigger": true,
+    "matched_words": [
+     "счет*"
+    ],
+    "checked": [
+     {
+      "word": "треть*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "лиц*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "интерес*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "счет*",
+      "matched": [
+       "счету"
+      ],
+      "context": [
+       "оплата по счету № 6870 от 07.08.201"
+      ]
+     },
+     {
+      "word": "правопреемник*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "довереннос*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "цессионар*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "контрагент*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "польз*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "выгодоприобретател*",
+      "matched": [],
+      "context": []
+     }
+    ],
+    "za_fragments": [
+     {
+      "match": "за",
+      "pos": 105,
+      "context": "886а2 от 12.01.2012 за март 2021 г. (оплат"
+     },
+     {
+      "match": "за",
+      "pos": 129,
+      "context": "арт 2021 г. (оплата за ооо улица за). в то"
+     },
+     {
+      "match": "за",
+      "pos": 142,
+      "context": "оплата за ооо улица за). в том числе ндс 5"
+     }
+    ]
+   },
+   "extract_name_direct": null,
+   "regex_baseline": [
+    {
+     "match": "за",
+     "pos": 105,
+     "context": "886А2 от 12.01.2012 за март 2021 г. (Оплат"
+    },
+    {
+     "match": "за",
+     "pos": 129,
+     "context": "арт 2021 г. (Оплата за ООО Улица ЗА). В то"
+    },
+    {
+     "match": "ЗА",
+     "pos": 142,
+     "context": "Оплата за ООО Улица ЗА). В том числе НДС 5"
+    }
+   ]
+  },
+  {
+   "id": 24,
+   "expected": false,
+   "beneficiary": "",
+   "kind": "none",
+   "contract_type": "Агентский договор",
+   "text": "Оплата по агентскому отчету №39932 за реализованный товар за май  (позиции согласно отчета) по агентскому договору № 123453. 139 995-00 руб. без НДС",
+   "api": {
+    "settingsVersion": 1,
+    "overridden": false,
+    "threshold": 0.5,
+    "decision": "GATED",
+    "score": 0.0,
+    "thirdParty": false,
+    "extractedName": null,
+    "negativeSimilarity": null
+   },
+   "rule_third_party": false,
+   "api_matches_rule": true,
+   "gate": {
+    "has_trigger": false,
+    "matched_words": [],
+    "checked": [
+     {
+      "word": "треть*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "лиц*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "интерес*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "счет*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "правопреемник*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "довереннос*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "цессионар*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "контрагент*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "польз*",
+      "matched": [],
+      "context": []
+     },
+     {
+      "word": "выгодоприобретател*",
+      "matched": [],
+      "context": []
+     }
+    ],
+    "za_fragments": [
+     {
+      "match": "за",
+      "pos": 35,
+      "context": "скому отчету №39932 за реализованный товар"
+     },
+     {
+      "match": "за",
+      "pos": 58,
+      "context": "реализованный товар за май  (позиции согла"
+     }
+    ]
+   },
+   "extract_name_direct": null,
+   "regex_baseline": [
+    {
+     "match": "за",
+     "pos": 35,
+     "context": "скому отчету №39932 за реализованный товар"
+    },
+    {
+     "match": "за",
+     "pos": 58,
+     "context": "реализованный товар за май  (позиции согла"
+    }
+   ]
+  }
+ ]
+}
