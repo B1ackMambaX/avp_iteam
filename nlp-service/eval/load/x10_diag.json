@@ -1,0 +1,191 @@
+{
+  "summary": {
+    "label": "x10_diag",
+    "total_ops": 120000,
+    "reset_s": 3.0,
+    "run_s": 929.8,
+    "ops_per_s": 129.1,
+    "contracts": 1000000,
+    "started_at": 1795331659,
+    "finished_at": 1795332593,
+    "hikari_pending_max": null,
+    "hikari_active_max": null,
+    "heap_mb_max": null,
+    "cpu_max": null,
+    "classify_avg_ms": null
+  },
+  "run": {
+    "parser": "NLP",
+    "millis": 929576,
+    "intake": 120000,
+    "nlpDone": 120000,
+    "nlpRetried": 0,
+    "nlpFailed": 0,
+    "mapped": 120000,
+    "mappingMillis": 22308,
+    "mappedPerSecond": 5379.2,
+    "mappedByStatus": {
+      "AUTO_MAPPED": 77067,
+      "AMBIGUOUS": 24979,
+      "MANUAL_REQUIRED": 2954,
+      "NOT_FOUND": 15000
+    },
+    "timedOut": false,
+    "stats": {
+      "operationsByStatus": {
+        "AMBIGUOUS": 24979,
+        "AUTO_MAPPED": 77067,
+        "MANUAL_REQUIRED": 2954,
+        "NOT_FOUND": 15000
+      },
+      "operationsByReason": {
+        "CLOSE_CANDIDATES": 24979,
+        "CONFIDENT_MATCH": 54656,
+        "NO_CANDIDATES": 15000,
+        "SINGLE_CANDIDATE": 22411,
+        "THIRD_PARTY_UNCONFIRMED": 2954
+      },
+      "nlpTasksByStatus": {
+        "DONE": 120000
+      },
+      "contracts": 1000000,
+      "clients": 300000
+    }
+  },
+  "report": {
+    "total": 100000,
+    "correct": 95020,
+    "accuracy": 95.0,
+    "wrongAutoMapped": 0,
+    "notProcessedYet": 0,
+    "byScenario": {
+      "NUMBER_AND_PARTY": {
+        "total": 35000,
+        "correct": 35000,
+        "accuracy": 100.0,
+        "wrongAutoMapped": 0,
+        "actualStatuses": {
+          "AUTO_MAPPED": 35000
+        }
+      },
+      "SINGLE_CONTRACT": {
+        "total": 15000,
+        "correct": 15000,
+        "accuracy": 100.0,
+        "wrongAutoMapped": 0,
+        "actualStatuses": {
+          "AUTO_MAPPED": 15000
+        }
+      },
+      "AMBIGUOUS": {
+        "total": 10000,
+        "correct": 10000,
+        "accuracy": 100.0,
+        "wrongAutoMapped": 0,
+        "actualStatuses": {
+          "AMBIGUOUS": 10000
+        }
+      },
+      "THIRD_PARTY_NUMBER": {
+        "total": 10000,
+        "correct": 9999,
+        "accuracy": 100.0,
+        "wrongAutoMapped": 0,
+        "actualStatuses": {
+          "AUTO_MAPPED": 9999,
+          "MANUAL_REQUIRED": 1
+        }
+      },
+      "THIRD_PARTY_NAME": {
+        "total": 10000,
+        "correct": 5021,
+        "accuracy": 50.2,
+        "wrongAutoMapped": 0,
+        "actualStatuses": {
+          "AMBIGUOUS": 4979,
+          "AUTO_MAPPED": 5021
+        }
+      },
+      "FALSE_THIRD_PARTY": {
+        "total": 5000,
+        "correct": 5000,
+        "accuracy": 100.0,
+        "wrongAutoMapped": 0,
+        "actualStatuses": {
+          "AUTO_MAPPED": 5000
+        }
+      },
+      "NOT_FOUND": {
+        "total": 15000,
+        "correct": 15000,
+        "accuracy": 100.0,
+        "wrongAutoMapped": 0,
+        "actualStatuses": {
+          "NOT_FOUND": 15000
+        }
+      }
+    },
+    "chaos": {
+      "total": 20000,
+      "correct": 20000,
+      "accuracy": 100.0,
+      "wrongAutoMapped": 0,
+      "notProcessedYet": 0,
+      "byScenario": {
+        "PARTIAL_NAME_ONLY": {
+          "total": 5000,
+          "correct": 5000,
+          "accuracy": 100.0,
+          "wrongAutoMapped": 0,
+          "actualStatuses": {
+            "AMBIGUOUS": 5000
+          },
+          "ambiguous": 5000,
+          "expectedInCandidates": 5000,
+          "avgCandidates": 6.3,
+          "missingExamples": []
+        },
+        "NOISY_NUMBER_WITH_PARTY": {
+          "total": 5000,
+          "correct": 5000,
+          "accuracy": 100.0,
+          "wrongAutoMapped": 0,
+          "actualStatuses": {
+            "AMBIGUOUS": 5000
+          },
+          "ambiguous": 5000,
+          "expectedInCandidates": 5000,
+          "avgCandidates": 6.4,
+          "missingExamples": []
+        },
+        "PARTIAL_NAME_SINGLE_CONTRACT": {
+          "total": 5000,
+          "correct": 5000,
+          "accuracy": 100.0,
+          "wrongAutoMapped": 0,
+          "actualStatuses": {
+            "AUTO_MAPPED": 2047,
+            "MANUAL_REQUIRED": 2953
+          },
+          "ambiguous": 0,
+          "expectedInCandidates": 0,
+          "avgCandidates": 0.0,
+          "missingExamples": []
+        },
+        "NOISY_NUMBER_SINGLE_CONTRACT": {
+          "total": 5000,
+          "correct": 5000,
+          "accuracy": 100.0,
+          "wrongAutoMapped": 0,
+          "actualStatuses": {
+            "AUTO_MAPPED": 5000
+          },
+          "ambiguous": 0,
+          "expectedInCandidates": 0,
+          "avgCandidates": 0.0,
+          "missingExamples": []
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,269 @@
+
+===== minute 1 =====
+    at    |           relname           | n_live_tup | n_dead_tup |        last_autovacuum        | autovacuum_count 
+----------+-----------------------------+------------+------------+-------------------------------+------------------
+ 07:15:20 | nlp_task                    |     120005 |      12671 | 2026-11-22 07:15:00.614336+00 |                4
+ 07:15:20 | operation_mapping_candidate |     143786 |          0 | 2026-11-22 07:15:13.269814+00 |                3
+ 07:15:20 | operations                  |     119851 |      10939 | 2026-11-22 07:15:11.151793+00 |                4
+(3 rows)
+
+ pid |        state        |    xact_age     | backend_xmin |                            query                            
+-----+---------------------+-----------------+--------------+-------------------------------------------------------------
+ 178 | idle in transaction | 00:00:00.011485 |              | UPDATE operations SET status = 'PARSED', updated_at = now()+
+     |                     |                 |              | 
+(1 row)
+
+avp_app cpu=82.38% mem=861.6MiB / 5.787GiB io=24.6kB / 348kB
+avp_perf_pg cpu=7.84% mem=310.2MiB / 5.787GiB io=70.4MB / 6.18GB
+
+===== minute 2 =====
+    at    |           relname           | n_live_tup | n_dead_tup |        last_autovacuum        | autovacuum_count 
+----------+-----------------------------+------------+------------+-------------------------------+------------------
+ 07:16:22 | nlp_task                    |     120000 |       9100 | 2026-11-22 07:16:00.414632+00 |                5
+ 07:16:22 | operation_mapping_candidate |     215132 |          0 | 2026-11-22 07:16:03.957339+00 |                4
+ 07:16:22 | operations                  |     119956 |       8307 | 2026-11-22 07:16:02.100883+00 |                5
+(3 rows)
+
+ pid |        state        |    xact_age     | backend_xmin |             query             
+-----+---------------------+-----------------+--------------+-------------------------------
+ 178 | idle in transaction | 00:00:00.009409 |              | WITH picked AS (             +
+     |                     |                 |              |     SELECT id FROM operations+
+     |                     |                 |              |     WHERE sta
+(1 row)
+
+avp_app cpu=87.26% mem=867.8MiB / 5.787GiB io=24.6kB / 393kB
+avp_perf_pg cpu=3.28% mem=311MiB / 5.787GiB io=70.4MB / 6.66GB
+
+===== minute 3 =====
+    at    |           relname           | n_live_tup | n_dead_tup |        last_autovacuum        | autovacuum_count 
+----------+-----------------------------+------------+------------+-------------------------------+------------------
+ 07:17:25 | nlp_task                    |     120000 |      31050 | 2026-11-22 07:16:00.414632+00 |                5
+ 07:17:25 | operation_mapping_candidate |     226232 |          0 | 2026-11-22 07:16:03.957339+00 |                4
+ 07:17:25 | operations                  |     119903 |      30612 | 2026-11-22 07:16:02.100883+00 |                5
+(3 rows)
+
+ pid |        state        |    xact_age     | backend_xmin |             query             
+-----+---------------------+-----------------+--------------+-------------------------------
+ 178 | idle in transaction | 00:00:00.007092 |              | WITH picked AS (             +
+     |                     |                 |              |     SELECT id FROM operations+
+     |                     |                 |              |     WHERE sta
+(1 row)
+
+avp_app cpu=92.79% mem=867.9MiB / 5.787GiB io=24.6kB / 438kB
+avp_perf_pg cpu=3.03% mem=311.2MiB / 5.787GiB io=70.4MB / 6.76GB
+
+===== minute 4 =====
+    at    |           relname           | n_live_tup | n_dead_tup |        last_autovacuum        | autovacuum_count 
+----------+-----------------------------+------------+------------+-------------------------------+------------------
+ 07:18:27 | nlp_task                    |     120000 |       7550 | 2026-11-22 07:18:00.573613+00 |                6
+ 07:18:27 | operation_mapping_candidate |     279888 |          0 | 2026-11-22 07:18:04.747651+00 |                5
+ 07:18:27 | operations                  |     119956 |       6911 | 2026-11-22 07:18:02.968669+00 |                6
+(3 rows)
+
+ pid |        state        |    xact_age     | backend_xmin |                            query                            
+-----+---------------------+-----------------+--------------+-------------------------------------------------------------
+ 178 | idle in transaction | 00:00:00.057582 |              | UPDATE operations SET status = 'PARSED', updated_at = now()+
+     |                     |                 |              | 
+(1 row)
+
+avp_app cpu=106.53% mem=862.9MiB / 5.787GiB io=24.6kB / 483kB
+avp_perf_pg cpu=4.09% mem=311.5MiB / 5.787GiB io=70.4MB / 7.15GB
+
+===== minute 5 =====
+    at    |           relname           | n_live_tup | n_dead_tup |        last_autovacuum        | autovacuum_count 
+----------+-----------------------------+------------+------------+-------------------------------+------------------
+ 07:19:30 | nlp_task                    |     120000 |      22350 | 2026-11-22 07:18:00.573613+00 |                6
+ 07:19:30 | operation_mapping_candidate |     329381 |          0 | 2026-11-22 07:18:04.747651+00 |                5
+ 07:19:30 | operations                  |     119952 |      21707 | 2026-11-22 07:18:02.968669+00 |                6
+(3 rows)
+
+ pid |        state        |    xact_age     | backend_xmin |                            query                            
+-----+---------------------+-----------------+--------------+-------------------------------------------------------------
+ 178 | idle in transaction | 00:00:00.051877 |              | UPDATE operations SET status = 'PARSED', updated_at = now()+
+     |                     |                 |              | 
+(1 row)
+
+avp_app cpu=87.97% mem=862.8MiB / 5.787GiB io=24.6kB / 528kB
+avp_perf_pg cpu=3.56% mem=311.8MiB / 5.787GiB io=70.4MB / 7.51GB
+
+===== minute 6 =====
+    at    |           relname           | n_live_tup | n_dead_tup |        last_autovacuum        | autovacuum_count 
+----------+-----------------------------+------------+------------+-------------------------------+------------------
+ 07:20:32 | nlp_task                    |     120000 |       6500 | 2026-11-22 07:20:00.537607+00 |                7
+ 07:20:32 | operation_mapping_candidate |     374584 |          0 | 2026-11-22 07:20:04.584124+00 |                6
+ 07:20:32 | operations                  |     119950 |       6151 | 2026-11-22 07:20:02.686591+00 |                7
+(3 rows)
+
+ pid | state | xact_age | backend_xmin | query 
+-----+-------+----------+--------------+-------
+(0 rows)
+
+avp_app cpu=86.85% mem=862.9MiB / 5.787GiB io=24.6kB / 573kB
+avp_perf_pg cpu=3.65% mem=312MiB / 5.787GiB io=70.4MB / 8.01GB
+
+===== minute 7 =====
+    at    |           relname           | n_live_tup | n_dead_tup |        last_autovacuum        | autovacuum_count 
+----------+-----------------------------+------------+------------+-------------------------------+------------------
+ 07:21:35 | nlp_task                    |     120000 |      18100 | 2026-11-22 07:20:00.537607+00 |                7
+ 07:21:35 | operation_mapping_candidate |     420399 |          0 | 2026-11-22 07:20:04.584124+00 |                6
+ 07:21:35 | operations                  |     119950 |      17801 | 2026-11-22 07:20:02.686591+00 |                7
+(3 rows)
+
+ pid |        state        |    xact_age     | backend_xmin |                            query                            
+-----+---------------------+-----------------+--------------+-------------------------------------------------------------
+ 178 | idle in transaction | 00:00:00.078105 |              | UPDATE operations SET status = 'PARSED', updated_at = now()+
+     |                     |                 |              | 
+(1 row)
+
+avp_app cpu=89.88% mem=872MiB / 5.787GiB io=24.6kB / 618kB
+avp_perf_pg cpu=5.68% mem=313MiB / 5.787GiB io=70.4MB / 8.34GB
+
+===== minute 8 =====
+    at    |           relname           | n_live_tup | n_dead_tup |        last_autovacuum        | autovacuum_count 
+----------+-----------------------------+------------+------------+-------------------------------+------------------
+ 07:22:37 | nlp_task                    |     120000 |      30200 | 2026-11-22 07:20:00.537607+00 |                7
+ 07:22:37 | operation_mapping_candidate |     460495 |          0 | 2026-11-22 07:22:02.572601+00 |                7
+ 07:22:37 | operations                  |     119950 |      29746 | 2026-11-22 07:20:02.686591+00 |                7
+(3 rows)
+
+ pid |        state        |    xact_age     | backend_xmin |         query         
+-----+---------------------+-----------------+--------------+-----------------------
+ 178 | idle in transaction | 00:00:00.074403 |              | UPDATE operations    +
+     |                     |                 |              | SET status = $1,     +
+     |                     |                 |              |     contract_id = $2,+
+     |                     |                 |              |    
+(1 row)
+
+avp_app cpu=90.74% mem=893.7MiB / 5.787GiB io=24.6kB / 664kB
+avp_perf_pg cpu=3.21% mem=313.4MiB / 5.787GiB io=70.4MB / 8.64GB
+
+===== minute 9 =====
+    at    |           relname           | n_live_tup | n_dead_tup |        last_autovacuum        | autovacuum_count 
+----------+-----------------------------+------------+------------+-------------------------------+------------------
+ 07:23:40 | nlp_task                    |     116368 |       7900 | 2026-11-22 07:23:00.630657+00 |                8
+ 07:23:40 | operation_mapping_candidate |     467476 |          0 | 2026-11-22 07:22:02.572601+00 |                7
+ 07:23:40 | operations                  |     143271 |       7450 | 2026-11-22 07:23:02.914763+00 |                8
+(3 rows)
+
+ pid |        state        |    xact_age     | backend_xmin |                            query                            
+-----+---------------------+-----------------+--------------+-------------------------------------------------------------
+ 178 | idle in transaction | 00:00:00.039061 |              | UPDATE operations SET status = 'PARSED', updated_at = now()+
+     |                     |                 |              | 
+(1 row)
+
+avp_app cpu=94.15% mem=914.7MiB / 5.787GiB io=24.6kB / 709kB
+avp_perf_pg cpu=1.41% mem=313.5MiB / 5.787GiB io=70.4MB / 8.78GB
+----- EXPLAIN intake query -----
+                                                                  QUERY PLAN                                                                   
+-----------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=0.12..7.86 rows=1 width=14) (actual time=0.007..0.008 rows=0 loops=1)
+   Buffers: shared hit=1
+   ->  LockRows  (cost=0.12..7.86 rows=1 width=14) (actual time=0.007..0.007 rows=0 loops=1)
+         Buffers: shared hit=1
+         ->  Index Scan using idx_operation_pending on operations  (cost=0.12..7.85 rows=1 width=14) (actual time=0.006..0.006 rows=0 loops=1)
+               Filter: ((status)::text = 'PENDING'::text)
+               Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=231 read=5
+ Planning Time: 0.317 ms
+ Execution Time: 0.018 ms
+(11 rows)
+
+
+===== minute 10 =====
+    at    |           relname           | n_live_tup | n_dead_tup |        last_autovacuum        | autovacuum_count 
+----------+-----------------------------+------------+------------+-------------------------------+------------------
+ 07:24:42 | nlp_task                    |     120000 |      19100 | 2026-11-22 07:23:00.630657+00 |                8
+ 07:24:42 | operation_mapping_candidate |     467476 |          0 | 2026-11-22 07:22:02.572601+00 |                7
+ 07:24:42 | operations                  |     120000 |      18656 | 2026-11-22 07:23:02.914763+00 |                8
+(3 rows)
+
+ pid |        state        |    xact_age    | backend_xmin |            query            
+-----+---------------------+----------------+--------------+-----------------------------
+ 178 | idle in transaction | 00:00:00.01414 |         8720 | UPDATE nlp_task t          +
+     |                     |                |              | SET status = 'IN_PROGRESS',+
+     |                     |                |              |     attempts =
+(1 row)
+
+avp_app cpu=95.82% mem=934.1MiB / 5.787GiB io=24.6kB / 754kB
+avp_perf_pg cpu=2.06% mem=313.7MiB / 5.787GiB io=70.4MB / 8.83GB
+
+===== minute 11 =====
+    at    |           relname           | n_live_tup | n_dead_tup |        last_autovacuum        | autovacuum_count 
+----------+-----------------------------+------------+------------+-------------------------------+------------------
+ 07:25:45 | nlp_task                    |     120000 |      29850 | 2026-11-22 07:23:00.630657+00 |                8
+ 07:25:45 | operation_mapping_candidate |     474755 |          0 | 2026-11-22 07:22:02.572601+00 |                7
+ 07:25:45 | operations                  |     120000 |      29456 | 2026-11-22 07:23:02.914763+00 |                8
+(3 rows)
+
+ pid |        state        |    xact_age     | backend_xmin |                            query                            
+-----+---------------------+-----------------+--------------+-------------------------------------------------------------
+ 178 | idle in transaction | 00:00:00.047357 |              | UPDATE operations SET status = 'PARSED', updated_at = now()+
+     |                     |                 |              | 
+(1 row)
+
+avp_app cpu=104.59% mem=954.5MiB / 5.787GiB io=24.6kB / 799kB
+avp_perf_pg cpu=3.68% mem=314.1MiB / 5.787GiB io=70.4MB / 8.97GB
+
+===== minute 12 =====
+    at    |           relname           | n_live_tup | n_dead_tup |        last_autovacuum        | autovacuum_count 
+----------+-----------------------------+------------+------------+-------------------------------+------------------
+ 07:26:48 | nlp_task                    |     120000 |       7450 | 2026-11-22 07:26:00.551651+00 |                9
+ 07:26:48 | operation_mapping_candidate |     505751 |          0 | 2026-11-22 07:22:02.572601+00 |                7
+ 07:26:48 | operations                  |     120000 |       7004 | 2026-11-22 07:26:02.889626+00 |                9
+(3 rows)
+
+ pid | state | xact_age | backend_xmin | query 
+-----+-------+----------+--------------+-------
+(0 rows)
+
+avp_app cpu=116.04% mem=970.9MiB / 5.787GiB io=24.6kB / 864kB
+avp_perf_pg cpu=3.05% mem=314.5MiB / 5.787GiB io=70.4MB / 9.29GB
+
+===== minute 13 =====
+    at    |           relname           | n_live_tup | n_dead_tup |        last_autovacuum        | autovacuum_count 
+----------+-----------------------------+------------+------------+-------------------------------+------------------
+ 07:27:50 | nlp_task                    |     120000 |      17300 | 2026-11-22 07:26:00.551651+00 |                9
+ 07:27:50 | operation_mapping_candidate |     532692 |          0 | 2026-11-22 07:22:02.572601+00 |                7
+ 07:27:50 | operations                  |     120000 |      16854 | 2026-11-22 07:26:02.889626+00 |                9
+(3 rows)
+
+ pid | state | xact_age | backend_xmin | query 
+-----+-------+----------+--------------+-------
+(0 rows)
+
+avp_app cpu=86.78% mem=986.2MiB / 5.787GiB io=24.6kB / 909kB
+avp_perf_pg cpu=1.56% mem=315MiB / 5.787GiB io=70.4MB / 9.5GB
+
+===== minute 14 =====
+    at    |           relname           | n_live_tup | n_dead_tup |        last_autovacuum        | autovacuum_count 
+----------+-----------------------------+------------+------------+-------------------------------+------------------
+ 07:28:52 | nlp_task                    |     120000 |      26250 | 2026-11-22 07:26:00.551651+00 |                9
+ 07:28:52 | operation_mapping_candidate |     537192 |          0 | 2026-11-22 07:22:02.572601+00 |                7
+ 07:28:52 | operations                  |     119950 |      25906 | 2026-11-22 07:26:02.889626+00 |                9
+(3 rows)
+
+ pid |        state        |     xact_age     | backend_xmin |                   query                    
+-----+---------------------+------------------+--------------+--------------------------------------------
+ 178 | idle in transaction | -00:00:00.000198 |         9907 | WITH hubs AS (                            +
+     |                     |                  |              |     SELECT client_id FROM contract_parties+
+     |                     |                  |              |   
+(1 row)
+
+avp_app cpu=98.90% mem=1003MiB / 5.787GiB io=24.6kB / 954kB
+avp_perf_pg cpu=2.18% mem=315.2MiB / 5.787GiB io=70.4MB / 9.57GB
+
+===== minute 15 =====
+    at    |           relname           | n_live_tup | n_dead_tup |        last_autovacuum        | autovacuum_count 
+----------+-----------------------------+------------+------------+-------------------------------+------------------
+ 07:29:55 | nlp_task                    |     120000 |       7800 | 2026-11-22 07:29:00.61093+00  |               10
+ 07:29:55 | operation_mapping_candidate |     541692 |          0 | 2026-11-22 07:22:02.572601+00 |                7
+ 07:29:55 | operations                  |     159430 |       7700 | 2026-11-22 07:29:02.008926+00 |               10
+(3 rows)
+
+ pid | state | xact_age | backend_xmin | query 
+-----+-------+----------+--------------+-------
+(0 rows)
+
+avp_app cpu=2.65% mem=1016MiB / 5.787GiB io=24.6kB / 999kB
+avp_perf_pg cpu=0.39% mem=340.4MiB / 5.787GiB io=70.5MB / 9.64GB

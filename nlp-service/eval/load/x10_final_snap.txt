@@ -1,0 +1,31 @@
+
+===== minute 1 =====
+    at    |           relname           | n_live_tup | n_dead_tup |        last_autovacuum        | autovacuum_count 
+----------+-----------------------------+------------+------------+-------------------------------+------------------
+ 07:35:56 | nlp_task                    |     126000 |     140900 | 2026-11-22 07:35:00.351253+00 |               13
+ 07:35:56 | operation_mapping_candidate |     364813 |          0 | 2026-11-22 07:35:11.865254+00 |               10
+ 07:35:56 | operations                  |     119263 |     214426 | 2026-11-22 07:35:08.261459+00 |               13
+(3 rows)
+
+ pid | state  |    xact_age     | backend_xmin |                            query                             
+-----+--------+-----------------+--------------+--------------------------------------------------------------
+ 606 | active | 00:00:00.002647 |        22854 | SELECT contract_id, client_id FROM contract_parties WHERE co
+(1 row)
+
+avp_app cpu=25.56% mem=671.3MiB / 5.787GiB io=0B / 406kB
+avp_perf_pg cpu=22.18% mem=310.7MiB / 5.787GiB io=70.5MB / 15.7GB
+
+===== minute 2 =====
+    at    |           relname           | n_live_tup | n_dead_tup |        last_autovacuum        | autovacuum_count 
+----------+-----------------------------+------------+------------+-------------------------------+------------------
+ 07:36:59 | nlp_task                    |     120000 |      92282 | 2026-11-22 07:36:01.574393+00 |               14
+ 07:36:59 | operation_mapping_candidate |     541376 |          0 | 2026-11-22 07:36:15.459908+00 |               11
+ 07:36:59 | operations                  |     119355 |      85728 | 2026-11-22 07:36:12.241146+00 |               14
+(3 rows)
+
+ pid | state | xact_age | backend_xmin | query 
+-----+-------+----------+--------------+-------
+(0 rows)
+
+avp_app cpu=0.45% mem=673MiB / 5.787GiB io=0B / 492kB
+avp_perf_pg cpu=6.23% mem=321.3MiB / 5.787GiB io=70.5MB / 16.9GB

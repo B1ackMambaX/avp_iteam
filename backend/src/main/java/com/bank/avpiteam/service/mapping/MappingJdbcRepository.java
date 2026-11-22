@@ -208,6 +208,7 @@ public class MappingJdbcRepository {
                     mapping_reason = :reason,
                     mapped_by = CASE WHEN CAST(:contractId AS BIGINT) IS NULL THEN NULL ELSE 'AUTO' END,
                     mapped_at = CASE WHEN CAST(:contractId AS BIGINT) IS NULL THEN NULL ELSE now() END,
+                    mapping_source = CASE WHEN CAST(:contractId AS BIGINT) IS NULL THEN NULL ELSE 'AUTO' END,
                     updated_at = now()
                 WHERE id = :id
                 """, rows);
