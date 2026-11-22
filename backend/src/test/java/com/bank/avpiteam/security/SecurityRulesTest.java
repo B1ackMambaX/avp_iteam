@@ -55,7 +55,7 @@ class SecurityRulesTest {
             "ADMIN,PATCH,/api/admin/users/5,200",
             "EDITOR,POST,/api/admin/users/5/reset-password,403",
             "ADMIN,POST,/api/admin/users/5/reset-password,200",
-            "READER,GET,/something-else,403"
+            "READER,GET,/something-else,404"
     })
     void accessMatrix(String role, String method, String path, int expected) throws Exception {
         int status = mvc.perform(request(HttpMethod.valueOf(method), path)

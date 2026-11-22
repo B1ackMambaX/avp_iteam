@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -25,6 +26,7 @@ public class SecurityConfig {
     PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(); }
 
     @Bean
+    @Order(1)
     SecurityFilterChain apiChain(HttpSecurity http, ProblemJsonHandlers problems,
                                  @Value("${security.metrics.allowed-cidrs:127.0.0.0/8,::1/128,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16}")
                                  String[] cidrs) throws Exception {
@@ -38,7 +40,7 @@ public class SecurityConfig {
         String users = Permission.MANAGE_USERS.name();
         HttpMethod get = HttpMethod.GET;
 
-        http
+        http.securityMatcher("/api/**", "/actuator/**", "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**")
                 .csrf(c -> c.disable())   // stateless Basic, cookie-сессий нет
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .httpBasic(b -> b.authenticationEntryPoint(problems))
@@ -64,4 +66,5 @@ public class SecurityConfig {
                         .anyRequest().denyAll());
         return http.build();
     }
+
 }

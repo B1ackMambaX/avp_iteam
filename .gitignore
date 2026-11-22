@@ -28,3 +28,4 @@ Thumbs.db
 # Логи
 *.log
 schema.sql
+.playwright-mcp
